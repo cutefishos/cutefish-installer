@@ -305,6 +305,7 @@ void Page::layout()
     const double height = std::max(0.0, geometry().height - kFooterHeight);
     const double columnWidth = std::min(kContentWidth, std::max(0.0, width - 32));
     const double left = rounding::centeredStart(width, columnWidth);
+    const double contentWidth = std::min(this->contentWidth(), std::max(0.0, width - 32));
 
     const double titleHeight = m_title->heightForWidth(columnWidth);
     const double subtitleHeight = m_subtitle->isVisible() ? m_subtitle->heightForWidth(columnWidth) : 0;
@@ -332,7 +333,7 @@ void Page::layout()
     }
     if (contentHeight > 0)
         y += kContentGap;
-    m_content->setGeometry({left, y, columnWidth, contentHeight});
+    m_content->setGeometry({rounding::centeredStart(width, contentWidth), y, contentWidth, contentHeight});
     layoutContent();
 }
 

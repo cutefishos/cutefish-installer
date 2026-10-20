@@ -3,6 +3,8 @@
 
 #include "plan.h"
 
+#include "common/partitioning.h"
+
 #include "base/strings.h"
 
 #include <algorithm>
@@ -12,24 +14,49 @@ namespace strings = cutefish::base::strings;
 
 namespace plan {
 
-std::string partitionTable(bool uefi)
-{
-    std::string table = "label: gpt\n";
-    if (uefi)
-        table += "size=512MiB, type=uefi, name=\"EFI\"\n";
-    else
-        table += "size=1MiB, type=21686148-6449-6E6F-744E-656564454649, name=\"BIOS\"\n";
-    table += "type=linux, name=\"Cutefish\"\n";
-    return table;
-}
-
-std::string fstab(const std::string& rootUuid, const std::string& espUuid)
+std::string fstab(const std::vector<Mount>& mounts)
 {
     std::string text = "# <file system> <mount point> <type> <options> <dump> <pass>\n";
-    text += "UUID=" + rootUuid + " / ext4 defaults,noatime 0 1\n";
-    if (!espUuid.empty())
-        text += "UUID=" + espUuid + " /boot/efi vfat umask=0077 0 1\n";
+    std::vector<std::string> mountPoints;
+    for (const Mount& mount : mounts)
+        mountPoints.push_back(mount.mountPoint);
+    for (const size_t index : mountOrder(mountPoints)) {
+        const Mount& mount = mounts[index];
+        const std::string device = "UUID=" + mount.uuid;
+        if (mount.mountPoint == installer::kMountSwap) {
+            text += device + " none swap sw 0 0\n";
+        } else if (mount.fsType == "vfat") {
+            text += device + ' ' + mount.mountPoint + " vfat umask=0077 0 1\n";
+        } else {
+            // fsck checks ext4 only: the root first, the rest after it.
+            const char* pass = mount.fsType != "ext4" ? "0" : mount.mountPoint == "/" ? "1" : "2";
+            text += device + ' ' + mount.mountPoint + ' ' + mount.fsType + " defaults,noatime 0 " + pass + '\n';
+        }
+    }
     return text;
+}
+
+std::string newPartition(uint64_t startSector, uint64_t sizeSectors, const std::string& type, const std::string& name)
+{
+    std::string line = "start=" + std::to_string(startSector) + ", size=" + std::to_string(sizeSectors) + ", type=" + type;
+    if (!name.empty())
+        line += ", name=\"" + name + '"';
+    return line + '\n';
+}
+
+std::vector<size_t> mountOrder(const std::vector<std::string>& mountPoints)
+{
+    const auto depth = [&mountPoints](size_t index) {
+        const std::string& mountPoint = mountPoints[index];
+        if (mountPoint == installer::kMountSwap)
+            return size_t(1000);
+        return mountPoint == "/" ? size_t(0) : size_t(std::count(mountPoint.begin(), mountPoint.end(), '/'));
+    };
+    std::vector<size_t> order(mountPoints.size());
+    for (size_t i = 0; i < order.size(); ++i)
+        order[i] = i;
+    std::stable_sort(order.begin(), order.end(), [&depth](size_t a, size_t b) { return depth(a) < depth(b); });
+    return order;
 }
 
 std::string hosts(const std::string& hostName)

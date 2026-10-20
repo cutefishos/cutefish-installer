@@ -7,6 +7,7 @@
 #include "components.h"
 #include "installerwindow.h"
 #include "pages.h"
+#include "partitionpage.h"
 
 #include "base/timer.h"
 #include "ui/application.h"
@@ -79,10 +80,49 @@ int main(int argc, char** argv)
     save("4-timezone");
 
     installer::Options options {"/dev/nvme0n1", "Reion Wong", "reion", "secret", "reion-pc", "Asia/Singapore"};
-    window.summaryPage()->setSummary(options, *window.diskPage()->selectedDisk(),
-                                     {"Asia/Singapore", "Singapore", "Singapore", "UTC+08:00"});
+    const TimeZone singapore {"Asia/Singapore", "Singapore", "Singapore", "UTC+08:00"};
+    window.summaryPage()->setSummary(options, *window.diskPage()->selectedDisk(), singapore, nullptr);
     window.showStep(InstallerWindow::Step::Summary);
     save("5-summary");
+
+    // A disk shared with Windows: its EFI system partition kept, the free
+    // space for the system and swap.
+    constexpr uint64_t kGB = 1'000'000'000;
+    installer::DiskLayout layout;
+    layout.disk = "/dev/nvme0n1";
+    layout.size = 512110190592;
+    layout.table = "gpt";
+    layout.partitions = {
+            {1, "/dev/nvme0n1p1", installer::kMiB, 100 * installer::kMiB, "c12a7328-f81f-11d2-ba4b-00a0c93ec93b",
+             "vfat", "SYSTEM"},
+            {2, "/dev/nvme0n1p2", 101 * installer::kMiB, 16 * installer::kMiB, "e3c9e316-0b5c-4db8-817d-f92df00215ae",
+             "", ""},
+            {3, "/dev/nvme0n1p3", 117 * installer::kMiB, 250 * kGB, "ebd0a0a2-b9e5-4433-87c0-68b6b72699c7", "ntfs",
+             "Windows"},
+    };
+    PartitionPage* partitions = window.partitionPage();
+    partitions->setLoading("YMTC PC005 512GB");
+    window.showStep(InstallerWindow::Step::Partition);
+    save("3-partition-loading");
+    partitions->setLayout(layout, {"ext4", "btrfs", "xfs", "vfat", "swap"});
+    partitions->select(3);
+    save("3-partition");
+    window.showStep(InstallerWindow::Step::Partition);
+    installer::PartitionPlan plan(layout);
+    plan.assign(0, "/boot/efi", false, {});
+    const installer::PartitionPlan::Region free = plan.freeRegions().back();
+    plan.add(free.start, free.size - 16 * kGB, "/", "ext4");
+    plan.add(plan.freeRegions().back().start, 16 * kGB, "swap", "swap");
+    partitions->setLayout(layout, {"ext4", "btrfs", "xfs", "vfat", "swap"});
+    // Replays the plan through the page, as the dialogs would.
+    const auto replay = installer::PartitionPlan::fromMap(plan.toMap(), layout);
+    if (replay)
+        partitions->setPlanForCapture(*replay);
+    partitions->select(4);
+    save("3-partition-planned");
+    window.summaryPage()->setSummary(options, *window.diskPage()->selectedDisk(), singapore, &partitions->plan());
+    window.showStep(InstallerWindow::Step::Summary);
+    save("5-summary-manual");
 
     window.progressPage()->setProgress(installer::kStageCopy, 0.42);
     window.showStep(InstallerWindow::Step::Progress);

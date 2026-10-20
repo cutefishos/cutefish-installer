@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include <cstdint>
 #include <optional>
 #include <string>
 #include <string_view>
@@ -12,13 +13,25 @@
 // write them.
 namespace plan {
 
-// sfdisk's input for a GPT disk: an EFI system partition and the root file
-// system with UEFI; a BIOS boot partition for the boot loader's core and the
-// root file system without.
-std::string partitionTable(bool uefi);
+// One file system the installed system mounts, or swaps to.
+struct Mount
+{
+    std::string uuid;
+    // A directory, or installer::kMountSwap.
+    std::string mountPoint;
+    std::string fsType;
+};
 
-// The root file system by its UUID and, with UEFI, the EFI system partition.
-std::string fstab(const std::string& rootUuid, const std::string& espUuid);
+// The mounts by UUID, the root first.
+std::string fstab(const std::vector<Mount>& mounts);
+
+// sfdisk --append's input for one partition, in sectors; GPT partitions get
+// the name.
+std::string newPartition(uint64_t startSector, uint64_t sizeSectors, const std::string& type, const std::string& name);
+
+// The indexes of the mount points in the order to mount them: each after the
+// one it is inside, swap last.
+std::vector<size_t> mountOrder(const std::vector<std::string>& mountPoints);
 
 std::string hosts(const std::string& hostName);
 

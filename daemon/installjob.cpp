@@ -4,6 +4,7 @@
 #include "installjob.h"
 
 #include "disks.h"
+#include "layout.h"
 #include "plan.h"
 
 #include "base/file.h"
@@ -67,9 +68,10 @@ static std::string gecos(const std::string& fullName)
     return text;
 }
 
-InstallJob::InstallJob(Paths paths, installer::Options options)
+InstallJob::InstallJob(Paths paths, installer::Options options, installer::PartitionPlan plan)
     : m_paths(std::move(paths))
     , m_options(std::move(options))
+    , m_plan(std::move(plan))
 {
 }
 
@@ -165,32 +167,84 @@ bool InstallJob::releaseDisk()
 bool InstallJob::partition()
 {
     const std::string& disk = m_options.disk;
-    if (!exec({"wipefs", "--all", "--force", disk}))
-        return false;
-    if (!exec({"sfdisk", "--wipe", "always", "--wipe-partitions", "always", disk}, plan::partitionTable(m_uefi)))
-        return false;
+    const installer::PartitionPlan& plan = m_plan;
+    const uint64_t sector = plan.layout().sectorSize;
+    if (plan.hasNewTable()) {
+        if (!exec({"wipefs", "--all", "--force", disk})
+            || !exec({"sfdisk", "--wipe", "always", disk}, "label: gpt\n"))
+            return false;
+    }
+    if (!plan.deleted().empty()) {
+        std::vector<std::string> command {"sfdisk", "--delete", disk};
+        for (const int number : plan.deleted())
+            command.push_back(std::to_string(number));
+        if (!exec(command))
+            return false;
+    }
+    for (const installer::PlannedPartition& partition : plan.partitions()) {
+        if (!partition.isNew())
+            continue;
+        const std::string name = plan.table() != "gpt"           ? std::string()
+                : partition.mountPoint == "/boot/efi"            ? "EFI"
+                : partition.mountPoint == "/"                    ? "Cutefish"
+                : partition.mountPoint == installer::kMountBiosBoot ? "BIOS"
+                                                                 : std::string();
+        const std::string line = plan::newPartition(partition.start / sector, partition.size / sector,
+                                                    installer::partitionType(partition.mountPoint), name);
+        if (!exec({"sfdisk", "--append", "--wipe-partitions", "always", disk}, line))
+            return false;
+    }
     exec({"udevadm", "settle", "--timeout=10"});
 
-    m_espDevice = m_uefi ? partitionPath(disk, 1) : std::string();
-    m_rootDevice = partitionPath(disk, 2);
-    // udev may still be making the nodes of a disk it was not watching.
-    for (int attempt = 0; attempt < 50 && !fs::exists(m_rootDevice); ++attempt)
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
-    if (!fs::exists(m_rootDevice))
-        return fail("The new partition " + m_rootDevice + " did not appear.");
+    // New partitions are numbered by sfdisk; their starts find them again.
+    std::string json;
+    if (!exec({"sfdisk", "--json", disk}, {}, {}, &json))
+        return false;
+    const std::optional<installer::DiskLayout> written = parseSfdisk(json);
+    if (!written)
+        return fail("The new partition table cannot be read.");
+    for (const installer::PlannedPartition& partition : plan.partitions()) {
+        if (partition.mountPoint.empty() || partition.mountPoint == installer::kMountBiosBoot)
+            continue;
+        std::string device = partition.path;
+        for (const installer::ExistingPartition& existing : written->partitions) {
+            if (existing.start == partition.start)
+                device = existing.path;
+        }
+        if (device.empty())
+            return fail("A new partition is missing from the partition table.");
+        m_targets.push_back({device, partition.mountPoint, partition.fsType, partition.format});
+    }
 
-    if (m_uefi && !exec({"mkfs.vfat", "-F", "32", "-n", "EFI", m_espDevice}))
-        return false;
-    if (!exec({"mkfs.ext4", "-F", "-q", "-L", "Cutefish", m_rootDevice}))
-        return false;
+    for (const Target& target : m_targets) {
+        // udev may still be making the nodes of a disk it was not watching.
+        for (int attempt = 0; attempt < 50 && !fs::exists(target.device); ++attempt)
+            std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        if (!fs::exists(target.device))
+            return fail("The partition " + target.device + " did not appear.");
+        if (!target.format)
+            continue;
+        const std::string label = target.mountPoint == "/" ? "Cutefish" : target.mountPoint == "/boot/efi" ? "EFI" : "";
+        std::vector<std::string> command = mkfsCommand(target.fsType, label);
+        command.push_back(target.device);
+        if (!exec(command))
+            return false;
+        if (target.mountPoint == "/boot/efi")
+            m_freshEsp = true;
+    }
 
     std::error_code error;
     fs::create_directories(m_paths.target, error);
-    if (!mount({m_rootDevice}, m_paths.target))
-        return false;
-    if (m_uefi) {
-        fs::create_directories(inTarget("/boot/efi"), error);
-        if (!mount({m_espDevice}, inTarget("/boot/efi")))
+    std::vector<std::string> mountPoints;
+    for (const Target& target : m_targets)
+        mountPoints.push_back(target.mountPoint);
+    for (const size_t index : plan::mountOrder(mountPoints)) {
+        const Target& target = m_targets[index];
+        if (target.mountPoint == installer::kMountSwap)
+            continue;
+        const std::string mountPoint = target.mountPoint == "/" ? m_paths.target : inTarget(target.mountPoint);
+        fs::create_directories(mountPoint, error);
+        if (!mount({target.device}, mountPoint))
             return false;
     }
     return true;
@@ -217,11 +271,14 @@ bool InstallJob::mountChrootFileSystems()
 
 bool InstallJob::configure()
 {
-    const std::string rootUuid = uuidOf(m_rootDevice);
-    const std::string espUuid = m_uefi ? uuidOf(m_espDevice) : std::string();
-    if (rootUuid.empty() || (m_uefi && espUuid.empty()))
-        return fail("The new file systems have no UUID.");
-    if (!writeFile(inTarget("/etc/fstab"), plan::fstab(rootUuid, espUuid))
+    std::vector<plan::Mount> mounts;
+    for (const Target& target : m_targets) {
+        const std::string uuid = uuidOf(target.device);
+        if (uuid.empty())
+            return fail("The file system on " + target.device + " has no UUID.");
+        mounts.push_back({uuid, target.mountPoint, target.fsType});
+    }
+    if (!writeFile(inTarget("/etc/fstab"), plan::fstab(mounts))
         || !writeFile(inTarget("/etc/hostname"), m_options.hostName + '\n')
         || !writeFile(inTarget("/etc/hosts"), plan::hosts(m_options.hostName)))
         return false;
@@ -310,13 +367,22 @@ bool InstallJob::installBootloader()
     std::vector<std::string> command;
     if (m_uefi) {
         command = {"grub-install", "--target=x86_64-efi", "--efi-directory=/boot/efi", "--bootloader-id=debian",
-                   "--force-extra-removable", "--recheck"};
+                   "--recheck"};
+        // The removable media path boots firmware that forgets its entries;
+        // on a shared EFI system partition it belongs to the other system.
+        if (m_freshEsp)
+            command.push_back("--force-extra-removable");
         if (!m_paths.nvram)
             command.push_back("--no-nvram");
     } else {
         command = {"grub-install", "--target=i386-pc", "--recheck", m_options.disk};
     }
     if (!chroot(command))
+        return false;
+    // The boot menu lists the other systems on this computer.
+    std::error_code error;
+    fs::create_directories(inTarget("/etc/default/grub.d"), error);
+    if (!writeFile(inTarget("/etc/default/grub.d/cutefish-installer.cfg"), "GRUB_DISABLE_OS_PROBER=false\n"))
         return false;
     return chroot({"update-grub"});
 }

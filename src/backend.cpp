@@ -6,6 +6,7 @@
 #include "base/i18n.h"
 
 #include <chrono>
+#include <optional>
 
 namespace dbus = cutefish::base::dbus;
 using cutefish::i18n::tr;
@@ -66,6 +67,38 @@ void Backend::loadDisks(std::function<void(std::vector<DiskInfo> disks, std::str
             disks.push_back(std::move(disk));
         }
         done(std::move(disks), {});
+    });
+}
+
+void Backend::loadLayout(const std::string& disk,
+                         std::function<void(installer::DiskLayout layout, std::vector<std::string> fileSystems,
+                                            std::string error)> done)
+{
+    if (!m_proxy) {
+        done({}, {}, tr("The system bus cannot be reached."));
+        return;
+    }
+    m_fileSystemsCall = m_proxy->callAsync("GetFileSystems", [this, disk, done](const dbus::Reply& reply) {
+        std::vector<std::string> fileSystems;
+        if (reply.isError() || !reply.read(fileSystems)) {
+            done({}, {}, reply.isError() ? reply.error().message : std::string(tr("The file systems cannot be listed.")));
+            return;
+        }
+        m_layoutCall = m_proxy->callAsync(
+                "GetLayout",
+                [done, fileSystems](const dbus::Reply& reply) {
+                    dbus::VariantMap map;
+                    std::optional<installer::DiskLayout> layout;
+                    if (!reply.isError() && reply.read(map))
+                        layout = installer::layoutFromMap(map);
+                    if (!layout) {
+                        done({}, {}, reply.isError() ? reply.error().message
+                                                     : std::string(tr("The partitions cannot be read.")));
+                        return;
+                    }
+                    done(std::move(*layout), fileSystems, {});
+                },
+                disk);
     });
 }
 

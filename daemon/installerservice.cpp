@@ -3,12 +3,15 @@
 
 #include "installerservice.h"
 
+#include "layout.h"
+
 #include "base/event_loop.h"
 #include "base/file.h"
 #include "base/logging.h"
 #include "base/strings.h"
 
 #include <algorithm>
+#include <filesystem>
 #include <map>
 #include <tuple>
 
@@ -77,6 +80,15 @@ bool InstallerService::exportTo(dbus::Connection* bus)
             },
             {{}, {"disks"}});
     m_object->addMethod(
+            "GetLayout", "s", "a{sv}", [this](dbus::MethodCall& call) { getLayout(call); }, {{"disk"}, {"layout"}});
+    m_object->addMethod(
+            "GetFileSystems",
+            [this] {
+                m_idleTimer.start();
+                return availableFileSystems();
+            },
+            {{}, {"types"}});
+    m_object->addMethod(
             "Install", "a{sv}", "", [this](dbus::MethodCall& call) { install(call); }, {{"options"}, {}});
     m_object->addProperty("Running", [this] { return m_running; });
     m_object->addSignal("Progress", "sd", {"stage", "fraction"});
@@ -102,6 +114,21 @@ std::vector<Disk> InstallerService::disks() const
     return disks;
 }
 
+void InstallerService::getLayout(dbus::MethodCall& call)
+{
+    m_idleTimer.start();
+    std::string disk;
+    call.read(disk);
+    const std::vector<Disk> disks = this->disks();
+    const bool offered = std::any_of(disks.begin(), disks.end(), [&disk](const Disk& entry) { return entry.path == disk; });
+    const std::optional<installer::DiskLayout> layout = offered ? readLayout(disk) : std::nullopt;
+    if (!layout) {
+        call.replyError("org.freedesktop.DBus.Error.InvalidArgs", "Not a disk the system can be installed on: " + disk);
+        return;
+    }
+    call.reply(installer::toMap(*layout));
+}
+
 void InstallerService::install(dbus::MethodCall& call)
 {
     m_idleTimer.start();
@@ -117,7 +144,7 @@ void InstallerService::install(dbus::MethodCall& call)
         call.replyError("org.cutefish.Installer.Error.Busy", "An installation is running");
         return;
     }
-    if (const std::string problem = checkOptions(*options); !problem.empty()) {
+    if (const std::string problem = checkOptions(*options, nullptr); !problem.empty()) {
         call.replyError("org.freedesktop.DBus.Error.InvalidArgs", problem);
         return;
     }
@@ -153,15 +180,29 @@ void InstallerService::install(dbus::MethodCall& call)
             std::chrono::minutes(5));
 }
 
-std::string InstallerService::checkOptions(const installer::Options& options) const
+std::string InstallerService::checkOptions(const installer::Options& options, installer::PartitionPlan* planned) const
 {
     const std::vector<Disk> disks = this->disks();
     const auto disk = std::find_if(disks.begin(), disks.end(),
                                    [&options](const Disk& disk) { return disk.path == options.disk; });
     if (disk == disks.end())
         return "Not a disk the system can be installed on: " + options.disk;
-    if (disk->size < installer::kMinimumDiskSize && m_settings.testDisks.empty())
+    const bool erase = options.partitioning.empty();
+    if (erase && disk->size < installer::kMinimumDiskSize && m_settings.testDisks.empty())
         return "The disk is too small";
+    std::optional<installer::DiskLayout> layout = readLayout(options.disk);
+    if (!layout)
+        return "The disk cannot be read: " + options.disk;
+    const bool uefi = std::filesystem::exists("/sys/firmware/efi");
+    std::optional<installer::PartitionPlan> plan = erase
+            ? installer::PartitionPlan::eraseDisk(std::move(*layout), uefi)
+            : installer::PartitionPlan::fromMap(options.partitioning, std::move(*layout));
+    if (!plan)
+        return "The partitions on the disk changed; look at them again";
+    if (const std::string problem = plan->problem(uefi); !problem.empty())
+        return problem;
+    if (planned)
+        *planned = std::move(*plan);
     if (!installer::isValidUserName(options.userName) || isSystemAccount(options.userName))
         return "Not a user name that can be used: " + options.userName;
     if (options.password.empty() || options.password.find_first_of(":\n") != std::string::npos)
@@ -177,14 +218,20 @@ std::string InstallerService::checkOptions(const installer::Options& options) co
 
 void InstallerService::start(const installer::Options& options)
 {
+    // Again now that it is authorized: the disk may have changed meanwhile.
+    installer::PartitionPlan plan;
+    if (const std::string problem = checkOptions(options, &plan); !problem.empty()) {
+        m_object->emitSignal("Finished", false, problem);
+        return;
+    }
     m_running = true;
     m_object->emitPropertiesChanged({"Running"});
     if (m_thread.joinable())
         m_thread.join();
 
     const cutefish::base::LoopHandle loop = cutefish::base::EventLoop::current()->handle();
-    m_thread = std::thread([this, loop, paths = m_settings.paths, options] {
-        InstallJob job(paths, options);
+    m_thread = std::thread([this, loop, paths = m_settings.paths, options, plan = std::move(plan)] {
+        InstallJob job(paths, options, plan);
         job.onProgress = [this, loop](const std::string& stage, double fraction) {
             loop.post([this, stage, fraction] { m_object->emitSignal("Progress", stage, fraction); });
         };

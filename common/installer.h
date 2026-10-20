@@ -23,7 +23,7 @@ inline constexpr char kStageConfigure[] = "configure";
 inline constexpr char kStageBootloader[] = "bootloader";
 inline constexpr char kStageFinish[] = "finish";
 
-// What Install takes: the whole disk is erased and the system put on it.
+// What Install takes. Without a partition plan the whole disk is erased.
 struct Options
 {
     std::string disk;
@@ -32,6 +32,8 @@ struct Options
     std::string password;
     std::string hostName;
     std::string timeZone;
+    // A PartitionPlan's toMap(), empty to erase the disk.
+    cutefish::base::dbus::VariantMap partitioning;
 };
 
 cutefish::base::dbus::VariantMap toMap(const Options& options);

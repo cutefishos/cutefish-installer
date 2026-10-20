@@ -4,6 +4,7 @@
 #pragma once
 
 #include "common/installer.h"
+#include "common/partitioning.h"
 
 #include "base/dbus.h"
 
@@ -30,6 +31,11 @@ public:
 
     // The disks, or the error that kept them back.
     void loadDisks(std::function<void(std::vector<DiskInfo> disks, std::string error)> done);
+    // The disk's partitions and the file systems that can be made, or the
+    // error that kept them back.
+    void loadLayout(const std::string& disk,
+                    std::function<void(installer::DiskLayout layout, std::vector<std::string> fileSystems,
+                                       std::string error)> done);
     // Starts the installation; an error when it could not start.
     void install(const installer::Options& options, std::function<void(std::string error)> done);
     bool isRunning() const { return m_running; }
@@ -44,6 +50,8 @@ private:
     cutefish::base::dbus::Connection* m_bus;
     std::unique_ptr<cutefish::base::dbus::Proxy> m_proxy;
     cutefish::base::dbus::PendingCall m_disksCall;
+    cutefish::base::dbus::PendingCall m_layoutCall;
+    cutefish::base::dbus::PendingCall m_fileSystemsCall;
     cutefish::base::dbus::PendingCall m_installCall;
     cutefish::base::dbus::Match m_progress;
     cutefish::base::dbus::Match m_finished;

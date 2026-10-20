@@ -4,6 +4,7 @@
 #pragma once
 
 #include "common/installer.h"
+#include "common/partitioning.h"
 
 #include <cstdio>
 #include <functional>
@@ -11,10 +12,11 @@
 #include <string_view>
 #include <vector>
 
-// Puts the live system on a disk: partitions and formats it, copies the live
-// image, sets up the user and the machine, swaps the live packages for a boot
-// loader and unmounts everything again. Runs commands one after the other and
-// blocks, so it belongs on a thread of its own.
+// Puts the live system on a disk: partitions it as planned, formats and mounts
+// the partitions, copies the live image, sets up the user and the machine,
+// swaps the live packages for a boot loader and unmounts everything again.
+// Runs commands one after the other and blocks, so it belongs on a thread of
+// its own.
 class InstallJob
 {
 public:
@@ -30,7 +32,7 @@ public:
         bool nvram = true;
     };
 
-    InstallJob(Paths paths, installer::Options options);
+    InstallJob(Paths paths, installer::Options options, installer::PartitionPlan plan);
     ~InstallJob();
 
     InstallJob(const InstallJob&) = delete;
@@ -70,11 +72,22 @@ private:
     bool fail(std::string message);
     void log(std::string_view text);
 
+    // A partition the system mounts or swaps to.
+    struct Target
+    {
+        std::string device;
+        std::string mountPoint;
+        std::string fsType;
+        bool format = false;
+    };
+
     Paths m_paths;
     installer::Options m_options;
+    installer::PartitionPlan m_plan;
     bool m_uefi = false;
-    std::string m_espDevice;
-    std::string m_rootDevice;
+    // The EFI system partition was formatted, so nothing else boots from it.
+    bool m_freshEsp = false;
+    std::vector<Target> m_targets;
     std::vector<std::string> m_mounts;
     std::string m_error;
     std::FILE* m_log = nullptr;

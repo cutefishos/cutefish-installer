@@ -5,6 +5,7 @@
 
 #include "components.h"
 #include "pages.h"
+#include "partitionpage.h"
 
 #include "base/i18n.h"
 #include "base/logging.h"
@@ -16,6 +17,7 @@
 
 #include <algorithm>
 #include <chrono>
+#include <filesystem>
 
 using namespace cutefish::ui;
 using cutefish::i18n::tr;
@@ -107,6 +109,8 @@ InstallerWindow::InstallerWindow(Backend& backend)
     m_root = root.get();
     m_welcome = m_root->pages->addChild<WelcomePage>();
     m_disk = m_root->pages->addChild<DiskPage>();
+    m_partition = m_root->pages->addChild<PartitionPage>(std::filesystem::exists("/sys/firmware/efi"));
+    m_partition->setWindow(&m_window);
     m_account = m_root->pages->addChild<AccountPage>();
     m_timeZone = m_root->pages->addChild<TimeZonePage>();
     m_summary = m_root->pages->addChild<SummaryPage>();
@@ -117,6 +121,7 @@ InstallerWindow::InstallerWindow(Backend& backend)
     m_root->primary->onClicked = [this] { primaryClicked(); };
     m_root->secondary->onClicked = [this] { secondaryClicked(); };
     m_disk->onSelectionChanged = [this] { updateButtons(); };
+    m_partition->onChanged = [this] { updateButtons(); };
     m_account->onChanged = [this] { updateButtons(); };
     m_account->onAccepted = [this] { primaryClicked(); };
     m_timeZone->onSelectionChanged = [this] { updateButtons(); };
@@ -154,6 +159,8 @@ Page* InstallerWindow::page(Step step) const
         return m_welcome;
     case Step::Disk:
         return m_disk;
+    case Step::Partition:
+        return m_partition;
     case Step::Account:
         return m_account;
     case Step::TimeZone:
@@ -218,6 +225,8 @@ void InstallerWindow::go(Step step)
 
     if (step == Step::Disk)
         loadDisks();
+    if (step == Step::Partition)
+        loadLayout();
     if (step == Step::TimeZone)
         m_timeZone->scrollToSelection();
 }
@@ -241,6 +250,9 @@ void InstallerWindow::updateButtons()
     case Step::Disk:
         primary->setEnabled(m_disk->selectedDisk());
         break;
+    case Step::Partition:
+        primary->setEnabled(m_partition->isComplete());
+        break;
     case Step::Account:
         primary->setEnabled(m_account->isComplete());
         break;
@@ -248,8 +260,8 @@ void InstallerWindow::updateButtons()
         primary->setEnabled(m_timeZone->selectedZone());
         break;
     case Step::Summary:
-        primary->setText(tr("Erase Disk and Install"));
-        primary->setDestructive(true);
+        primary->setText(isManual() ? tr("Install") : tr("Erase Disk and Install"));
+        primary->setDestructive(m_summary->erases());
         break;
     case Step::Progress:
         primary->setVisible(false);
@@ -272,6 +284,9 @@ void InstallerWindow::primaryClicked()
         go(Step::Disk);
         break;
     case Step::Disk:
+        go(isManual() ? Step::Partition : Step::Account);
+        break;
+    case Step::Partition:
         go(Step::Account);
         break;
     case Step::Account:
@@ -280,7 +295,8 @@ void InstallerWindow::primaryClicked()
     case Step::TimeZone: {
         installer::Options options;
         m_account->fill(options);
-        m_summary->setSummary(options, *m_disk->selectedDisk(), *m_timeZone->selectedZone());
+        m_summary->setSummary(options, *m_disk->selectedDisk(), *m_timeZone->selectedZone(),
+                              isManual() ? &m_partition->plan() : nullptr);
         go(Step::Summary);
         break;
     }
@@ -308,8 +324,11 @@ void InstallerWindow::secondaryClicked()
     case Step::Disk:
         go(Step::Welcome);
         break;
-    case Step::Account:
+    case Step::Partition:
         go(Step::Disk);
+        break;
+    case Step::Account:
+        go(isManual() ? Step::Partition : Step::Disk);
         break;
     case Step::TimeZone:
         go(Step::Account);
@@ -337,10 +356,33 @@ void InstallerWindow::loadDisks()
     });
 }
 
+bool InstallerWindow::isManual() const
+{
+    return m_disk->isManual();
+}
+
+void InstallerWindow::loadLayout()
+{
+    const DiskInfo* disk = m_disk->selectedDisk();
+    // Read again each time: the disk may have changed since.
+    m_partition->setLoading(disk->model.empty() ? disk->path : disk->model);
+    updateButtons();
+    m_backend.loadLayout(disk->path, [this](installer::DiskLayout layout, std::vector<std::string> fileSystems,
+                                            std::string error) {
+        if (!error.empty())
+            m_partition->setError(error);
+        else
+            m_partition->setLayout(std::move(layout), std::move(fileSystems));
+        updateButtons();
+    });
+}
+
 void InstallerWindow::install()
 {
     installer::Options options;
     options.disk = m_disk->selectedDisk()->path;
+    if (isManual())
+        options.partitioning = m_partition->plan().toMap();
     m_account->fill(options);
     options.timeZone = m_timeZone->selectedZone()->id;
 

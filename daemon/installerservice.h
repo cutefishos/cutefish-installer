@@ -39,9 +39,11 @@ public:
     std::function<void()> onIdle;
 
 private:
+    void getLayout(cutefish::base::dbus::MethodCall& call);
     void install(cutefish::base::dbus::MethodCall& call);
-    // Empty when the options can be installed.
-    std::string checkOptions(const installer::Options& options) const;
+    // Empty when the options can be installed; the partitions to make go
+    // into `plan`.
+    std::string checkOptions(const installer::Options& options, installer::PartitionPlan* plan) const;
     void start(const installer::Options& options);
     void finished(const std::string& error);
 

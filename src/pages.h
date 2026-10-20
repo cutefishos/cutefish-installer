@@ -8,6 +8,7 @@
 #include "timezones.h"
 
 #include "common/installer.h"
+#include "common/partitioning.h"
 
 #include <functional>
 #include <string>
@@ -15,6 +16,7 @@
 
 namespace cutefish::ui {
 class BusyIndicator;
+class CheckBox;
 class ListView;
 class ProgressBar;
 class SearchField;
@@ -39,6 +41,8 @@ public:
     void setError(const std::string& error);
     // Null while none is chosen.
     const DiskInfo* selectedDisk() const;
+    // The partitions are chosen by hand instead of erasing the disk.
+    bool isManual() const;
 
     std::function<void()> onSelectionChanged;
 
@@ -49,10 +53,12 @@ protected:
 
 private:
     void select(int index);
+    double cardHeight() const;
 
     Card* m_card;
     cutefish::ui::BusyIndicator* m_busy;
     cutefish::ui::Label* m_message;
+    cutefish::ui::CheckBox* m_manual;
     std::vector<ChoiceRow*> m_rows;
     std::vector<DiskInfo> m_disks;
     int m_selected = -1;
@@ -134,7 +140,11 @@ class SummaryPage : public Page
 public:
     SummaryPage();
 
-    void setSummary(const installer::Options& options, const DiskInfo& disk, const TimeZone& zone);
+    // With a plan, the partitions chosen by hand; without, the disk erased.
+    void setSummary(const installer::Options& options, const DiskInfo& disk, const TimeZone& zone,
+                    const installer::PartitionPlan* plan);
+    // Installing erases data on the disk.
+    bool erases() const { return m_erases; }
 
     double contentHeight() const override;
 
@@ -145,6 +155,7 @@ private:
     Card* m_card;
     std::vector<SummaryRow*> m_rows;
     cutefish::ui::Label* m_warning;
+    bool m_erases = true;
 };
 
 class ProgressPage : public Page

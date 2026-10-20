@@ -19,7 +19,7 @@ static bool isLowerAlnum(char c)
 
 dbus::VariantMap toMap(const Options& options)
 {
-    return {
+    dbus::VariantMap map {
             {"disk", dbus::Variant(options.disk)},
             {"fullName", dbus::Variant(options.fullName)},
             {"userName", dbus::Variant(options.userName)},
@@ -27,6 +27,9 @@ dbus::VariantMap toMap(const Options& options)
             {"hostName", dbus::Variant(options.hostName)},
             {"timeZone", dbus::Variant(options.timeZone)},
     };
+    if (!options.partitioning.empty())
+        map["partitioning"] = dbus::Variant(options.partitioning);
+    return map;
 }
 
 std::optional<Options> optionsFromMap(const dbus::VariantMap& map)
@@ -47,6 +50,12 @@ std::optional<Options> optionsFromMap(const dbus::VariantMap& map)
         if (!text)
             return std::nullopt;
         *value = *text;
+    }
+    if (const auto found = map.find("partitioning"); found != map.end()) {
+        const std::optional<dbus::VariantMap> partitioning = found->second.get<dbus::VariantMap>();
+        if (!partitioning)
+            return std::nullopt;
+        options.partitioning = *partitioning;
     }
     return options;
 }

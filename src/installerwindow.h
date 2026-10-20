@@ -17,6 +17,7 @@ class Animation;
 class Page;
 class WelcomePage;
 class DiskPage;
+class PartitionPage;
 class AccountPage;
 class TimeZonePage;
 class SummaryPage;
@@ -31,6 +32,7 @@ public:
     enum class Step {
         Welcome,
         Disk,
+        Partition,
         Account,
         TimeZone,
         Summary,
@@ -49,6 +51,7 @@ public:
     Step step() const { return m_step; }
 
     DiskPage* diskPage() const { return m_disk; }
+    PartitionPage* partitionPage() const { return m_partition; }
     AccountPage* accountPage() const { return m_account; }
     TimeZonePage* timeZonePage() const { return m_timeZone; }
     SummaryPage* summaryPage() const { return m_summary; }
@@ -66,6 +69,8 @@ private:
     void primaryClicked();
     void secondaryClicked();
     void loadDisks();
+    void loadLayout();
+    bool isManual() const;
     void install();
     void finished(bool success, const std::string& error);
     void restart();
@@ -75,6 +80,7 @@ private:
     Root* m_root = nullptr;
     WelcomePage* m_welcome = nullptr;
     DiskPage* m_disk = nullptr;
+    PartitionPage* m_partition = nullptr;
     AccountPage* m_account = nullptr;
     TimeZonePage* m_timeZone = nullptr;
     SummaryPage* m_summary = nullptr;

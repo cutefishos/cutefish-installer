@@ -7,6 +7,7 @@
 #include "base/i18n.h"
 #include "base/strings.h"
 #include "ui/cell_layout.h"
+#include "ui/check_box.h"
 #include "ui/icon.h"
 #include "ui/list_view.h"
 #include "ui/painter.h"
@@ -32,6 +33,7 @@ static constexpr double kFormRowHeight = 44;
 static constexpr double kFormPadding = 16;
 static constexpr double kMessageGap = 12;
 static constexpr double kErrorPadding = 16;
+static constexpr double kManualGap = 16;
 static constexpr double kProgressHintGap = 20;
 
 // A name the live image's system accounts take, which the installed system
@@ -94,7 +96,19 @@ DiskPage::DiskPage()
     m_message = addLabel(content(), {}, 14);
     m_message->setTextAlignment(Label::TextAlignment::Center);
     m_message->setWrap(true);
+    m_manual = content()->addChild<CheckBox>(tr("Partition manually"));
+    m_manual->onToggled = [this](bool manual) {
+        setSubtitle(manual ? tr("Choose the partitions on the next page.")
+                           : tr("Cutefish uses the whole disk. Everything on it will be erased."));
+        if (onSelectionChanged)
+            onSelectionChanged();
+    };
     setLoading();
+}
+
+bool DiskPage::isManual() const
+{
+    return m_manual->isChecked();
 }
 
 void DiskPage::setLoading()
@@ -123,11 +137,11 @@ void DiskPage::setDisks(std::vector<DiskInfo> disks, const std::string& preferre
         row->setIconName(disk.removable ? "drive-harddisk-usb" : "drive-harddisk");
         row->setTitle(disk.model.empty() ? disk.path : disk.model);
         std::string detail = disk.path;
-        if (disk.size < installer::kMinimumDiskSize)
-            detail += " · " + format(tr("Too small, needs {size}"), {{"size", formatSize(installer::kMinimumDiskSize)}});
+        if (disk.size < installer::kMinimumRootSize)
+            detail += " · " + format(tr("Too small, needs {size}"), {{"size", formatSize(installer::kMinimumRootSize)}});
         row->setDetail(detail);
         row->setNote(formatSize(disk.size));
-        row->setEnabled(disk.size >= installer::kMinimumDiskSize);
+        row->setEnabled(disk.size >= installer::kMinimumRootSize);
         row->onClicked = [this, i] { select(int(i)); };
         m_rows.push_back(row);
         if (row->isEnabled() && disk.path == preferred)
@@ -165,10 +179,13 @@ void DiskPage::select(int index)
 
 double DiskPage::contentHeight() const
 {
-    if (m_loading)
+    if (m_loading || m_rows.empty())
         return 64;
-    if (m_rows.empty())
-        return 64;
+    return cardHeight() + kManualGap + m_manual->sizeHint().height;
+}
+
+double DiskPage::cardHeight() const
+{
     return double(m_rows.size()) * kDiskRowHeight + 2 * kCardInset;
 }
 
@@ -179,7 +196,10 @@ void DiskPage::layoutContent()
     m_busy->setRunning(m_loading);
     m_busy->setGeometry({rounding::centeredStart(bounds.width, 22), rounding::centeredStart(bounds.height, 22), 22, 22});
     m_card->setVisible(!m_loading && !m_rows.empty());
-    m_card->setGeometry(bounds);
+    m_card->setGeometry({0, 0, bounds.width, cardHeight()});
+    m_manual->setVisible(m_card->isVisible());
+    const SizeF manual = m_manual->sizeHint();
+    m_manual->setGeometry({0, cardHeight() + kManualGap, manual.width, manual.height});
     for (size_t i = 0; i < m_rows.size(); ++i)
         m_rows[i]->setGeometry({0, kCardInset + double(i) * kDiskRowHeight, bounds.width, kDiskRowHeight});
     m_message->setVisible(!m_loading && !m_message->text().empty());
@@ -417,15 +437,28 @@ SummaryPage::SummaryPage()
     m_warning->setTextAlignment(Label::TextAlignment::Center);
 }
 
-void SummaryPage::setSummary(const installer::Options& options, const DiskInfo& disk, const TimeZone& zone)
+void SummaryPage::setSummary(const installer::Options& options, const DiskInfo& disk, const TimeZone& zone,
+                             const installer::PartitionPlan* plan)
 {
     const std::string diskName = disk.model.empty() ? disk.path : disk.model;
-    m_rows[0]->setValue(diskName + " (" + formatSize(disk.size) + ")");
+    const std::string diskText = diskName + " (" + formatSize(disk.size) + ")";
+    m_rows[0]->setValue(plan ? format(tr("Partitioned manually, {disk}"), {{"disk", diskText}}) : diskText);
     m_rows[1]->setValue(options.fullName);
     m_rows[2]->setValue(options.userName);
     m_rows[3]->setValue(options.hostName);
     m_rows[4]->setValue(zone.country.empty() || zone.country == zone.city ? zone.city : zone.city + ", " + zone.country);
-    m_warning->setText(format(tr("Everything on {disk} will be erased. This cannot be undone."), {{"disk", diskName}}));
+    if (!plan) {
+        m_warning->setText(format(tr("Everything on {disk} will be erased. This cannot be undone."), {{"disk", diskName}}));
+    } else if (plan->hasNewTable()) {
+        m_warning->setText(format(tr("Every partition on {disk} will be deleted. This cannot be undone."),
+                                  {{"disk", diskName}}));
+    } else if (const std::vector<std::string> erased = plan->erasedPartitions(); !erased.empty()) {
+        m_warning->setText(format(tr("Everything on {partitions} will be erased. This cannot be undone."),
+                                  {{"partitions", strings::join(erased, ", ")}}));
+    } else {
+        m_warning->setText(tr("No existing partition is erased."));
+    }
+    m_erases = !plan || plan->hasNewTable() || !plan->erasedPartitions().empty();
     requestLayout();
 }
 
@@ -441,7 +474,7 @@ void SummaryPage::layoutContent()
     m_card->setGeometry({0, 0, bounds.width, cardHeight});
     for (size_t i = 0; i < m_rows.size(); ++i)
         m_rows[i]->setGeometry({0, double(i) * SummaryRow::kHeight, bounds.width, SummaryRow::kHeight});
-    m_warning->setColor(accent::red);
+    m_warning->setColor(m_erases ? ColorRecipe(accent::red) : ColorRecipe(Theme::current().disabledText));
     m_warning->setGeometry({0, cardHeight + kMessageGap, bounds.width, m_warning->heightForWidth(bounds.width)});
 }
 

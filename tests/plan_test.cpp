@@ -6,12 +6,10 @@
 
 #include <gtest/gtest.h>
 
-TEST(Plan, partitionTable)
+TEST(Plan, newPartition)
 {
-    EXPECT_EQ(plan::partitionTable(true),
-              "label: gpt\nsize=512MiB, type=uefi, name=\"EFI\"\ntype=linux, name=\"Cutefish\"\n");
-    EXPECT_EQ(plan::partitionTable(false), "label: gpt\nsize=1MiB, type=21686148-6449-6E6F-744E-656564454649, "
-                                           "name=\"BIOS\"\ntype=linux, name=\"Cutefish\"\n");
+    EXPECT_EQ(plan::newPartition(2048, 1048576, "U", "EFI"), "start=2048, size=1048576, type=U, name=\"EFI\"\n");
+    EXPECT_EQ(plan::newPartition(4096, 100, "L", ""), "start=4096, size=100, type=L\n");
 }
 
 TEST(Plan, partitionPaths)
@@ -38,10 +36,23 @@ TEST(Plan, onDisk)
 
 TEST(Plan, fstab)
 {
-    const std::string uefi = plan::fstab("1111", "AB-CD");
-    EXPECT_NE(uefi.find("UUID=1111 / ext4 defaults,noatime 0 1\n"), std::string::npos);
-    EXPECT_NE(uefi.find("UUID=AB-CD /boot/efi vfat umask=0077 0 1\n"), std::string::npos);
-    EXPECT_EQ(plan::fstab("1111", "").find("/boot/efi"), std::string::npos);
+    const std::string text = plan::fstab({{"S", "swap", "swap"},
+                                          {"H", "/home", "btrfs"},
+                                          {"E", "/boot/efi", "vfat"},
+                                          {"R", "/", "ext4"},
+                                          {"V", "/var", "ext4"}});
+    EXPECT_EQ(text, "# <file system> <mount point> <type> <options> <dump> <pass>\n"
+                    "UUID=R / ext4 defaults,noatime 0 1\n"
+                    "UUID=H /home btrfs defaults,noatime 0 0\n"
+                    "UUID=V /var ext4 defaults,noatime 0 2\n"
+                    "UUID=E /boot/efi vfat umask=0077 0 1\n"
+                    "UUID=S none swap sw 0 0\n");
+}
+
+TEST(Plan, mountOrder)
+{
+    EXPECT_EQ(plan::mountOrder({"/boot/efi", "swap", "/", "/boot", "/home"}),
+              (std::vector<size_t> {2, 3, 4, 0, 1}));
 }
 
 TEST(Plan, groups)

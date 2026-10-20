@@ -155,8 +155,9 @@ public:
     void setTitle(std::string title);
     void setSubtitle(std::string subtitle);
 
-    // Under the header, kContentWidth wide.
+    // Under the header, contentWidth() wide.
     cutefish::ui::View* content() const { return m_content; }
+    virtual double contentWidth() const { return kContentWidth; }
     virtual double contentHeight() const { return 0; }
 
     // Taken off the bottom of the page for the window's buttons.

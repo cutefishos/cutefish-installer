@@ -7,6 +7,8 @@ add_library(installer-ui STATIC
     installerwindow.h
     pages.cpp
     pages.h
+    partitionpage.cpp
+    partitionpage.h
     timezones.cpp
     timezones.h
 )

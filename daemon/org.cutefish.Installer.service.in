@@ -1,0 +1,5 @@
+[D-BUS Service]
+Name=org.cutefish.Installer
+Exec=@CMAKE_INSTALL_FULL_LIBEXECDIR@/cutefish-installer-service
+User=root
+SystemdService=cutefish-installer.service

@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=Install Cutefish
+Exec=cutefish-installer --autostart
+TryExec=cutefish-installer
+NoDisplay=true
+OnlyShowIn=Cutefish;

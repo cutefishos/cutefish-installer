@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=Install Cutefish
+Comment=Install Cutefish on this computer
+Exec=cutefish-installer
+Icon=system-software-install
+Terminal=false
+Categories=System;
+Keywords=Installer;Install;Setup;Disk;
+StartupNotify=true

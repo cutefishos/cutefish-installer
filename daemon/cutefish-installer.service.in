@@ -1,0 +1,8 @@
+[Unit]
+Description=Cutefish installer
+ConditionPathExists=/run/live/medium
+
+[Service]
+Type=dbus
+BusName=org.cutefish.Installer
+ExecStart=@CMAKE_INSTALL_FULL_LIBEXECDIR@/cutefish-installer-service

@@ -114,9 +114,23 @@ std::vector<std::string> installedPackages(std::string_view dpkgQueryOutput)
 
 std::vector<std::string> bootloaderPackages(bool uefi)
 {
+#if defined(__aarch64__)
+    (void)uefi;
+    return {"grub-efi-arm64"};
+#else
     if (uefi)
         return {"grub-efi-amd64"};
     return {"grub-pc"};
+#endif
+}
+
+std::string efiTarget()
+{
+#if defined(__aarch64__)
+    return "arm64-efi";
+#else
+    return "x86_64-efi";
+#endif
 }
 
 std::optional<double> unsquashfsProgress(std::string_view line)

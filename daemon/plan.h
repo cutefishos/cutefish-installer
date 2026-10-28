@@ -51,6 +51,9 @@ std::vector<std::string> installedPackages(std::string_view dpkgQueryOutput);
 // programs the live image has.
 std::vector<std::string> bootloaderPackages(bool uefi);
 
+// grub-install's --target for this processor's UEFI.
+std::string efiTarget();
+
 // A percentage line of unsquashfs -percentage, as a fraction.
 std::optional<double> unsquashfsProgress(std::string_view line);
 

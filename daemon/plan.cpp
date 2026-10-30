@@ -69,6 +69,13 @@ std::string hosts(const std::string& hostName)
            "ff02::2\t\tip6-allrouters\n";
 }
 
+std::string accountsServiceUser(const std::string& icon)
+{
+    return "[User]\n"
+           "Icon=" + icon + "\n"
+           "SystemAccount=false\n";
+}
+
 std::vector<std::string> existingGroups(std::string_view groupFile, const std::vector<std::string>& wanted)
 {
     std::set<std::string> listed;

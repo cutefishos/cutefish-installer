@@ -61,6 +61,12 @@ TEST(Plan, groups)
     EXPECT_EQ(plan::existingGroups(groups, plan::userGroups()), (std::vector<std::string> {"sudo", "audio", "netdev"}));
 }
 
+TEST(Plan, accountsServiceUser)
+{
+    EXPECT_EQ(plan::accountsServiceUser("/var/lib/AccountsService/icons/alice"),
+              "[User]\nIcon=/var/lib/AccountsService/icons/alice\nSystemAccount=false\n");
+}
+
 TEST(Plan, installedPackages)
 {
     const std::string output = "ii  live-boot\nun  live-tools\nii  cutefish-installer:amd64\nrc  calamares\n";

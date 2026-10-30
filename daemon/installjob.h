@@ -51,6 +51,7 @@ private:
     bool mountChrootFileSystems();
     bool configure();
     bool createUser();
+    bool setUserPicture();
     bool removeLivePackages();
     bool installBootloader();
     bool installPackagesFromMedium(const std::vector<std::string>& packages);

@@ -17,6 +17,7 @@
 #include <ctime>
 #include <fcntl.h>
 #include <filesystem>
+#include <random>
 #include <sys/stat.h>
 #include <sys/wait.h>
 #include <thread>
@@ -40,6 +41,9 @@ static const char* const kEnvironment[] = {
         "DEBIAN_FRONTEND=noninteractive",
         nullptr,
 };
+
+// The pictures a new account gets one of, installed with the wallpapers.
+static constexpr const char* kPresetPictures = "/usr/share/cutefish/avatars";
 
 // The lines kept for the error message of a command that failed.
 static constexpr size_t kErrorLines = 4;
@@ -330,7 +334,36 @@ bool InstallJob::createUser()
     command.push_back(m_options.userName);
     if (!chroot(command))
         return false;
-    return chroot({"chpasswd"}, m_options.userName + ':' + m_options.password + '\n');
+    if (!chroot({"chpasswd"}, m_options.userName + ':' + m_options.password + '\n'))
+        return false;
+    return setUserPicture();
+}
+
+// One of the presets, copied and recorded where AccountsService keeps an
+// account's picture, as its SetIconFile leaves them.
+bool InstallJob::setUserPicture()
+{
+    std::vector<fs::path> pictures;
+    std::error_code error;
+    for (const auto& entry : fs::directory_iterator(inTarget(kPresetPictures), error)) {
+        if (entry.is_regular_file(error))
+            pictures.push_back(entry.path());
+    }
+    if (pictures.empty())
+        return true;
+    std::random_device device;
+    std::uniform_int_distribution<size_t> pick(0, pictures.size() - 1);
+
+    const std::string icons = "/var/lib/AccountsService/icons";
+    const std::string users = "/var/lib/AccountsService/users";
+    fs::create_directories(inTarget(icons), error);
+    fs::create_directories(inTarget(users), error);
+    ::chmod(inTarget(users).c_str(), 0700);
+    const std::string icon = icons + '/' + m_options.userName;
+    if (!fs::copy_file(pictures[pick(device)], inTarget(icon), fs::copy_options::overwrite_existing, error))
+        return fail("Cannot set the account picture: " + error.message());
+    ::chmod(inTarget(icon).c_str(), 0644);
+    return writeFile(inTarget(users + '/' + m_options.userName), plan::accountsServiceUser(icon), 0600);
 }
 
 bool InstallJob::removeLivePackages()

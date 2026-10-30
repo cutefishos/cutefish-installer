@@ -38,6 +38,9 @@ std::string hosts(const std::string& hostName);
 // The groups of `wanted` that the group file lists, in order.
 std::vector<std::string> existingGroups(std::string_view groupFile, const std::vector<std::string>& wanted);
 
+// AccountsService's file for an account whose picture is the icon.
+std::string accountsServiceUser(const std::string& icon);
+
 // The groups a new user joins when the system has them.
 const std::vector<std::string>& userGroups();
 

@@ -582,6 +582,8 @@ void PartitionPage::addPartition()
 {
     const Entry entry = m_entries[size_t(m_selected)];
     m_dialog = std::make_unique<DialogWindow>(m_window, tr("Add Partition"), kDialogWidth);
+    // Cancel closes it.
+    m_dialog->setCloseVisible(false);
     auto* editor = m_dialog->setContent<PartitionEditor>(PartitionEditor::Mode::Add, m_uefi, m_plan.table() == "gpt",
                                                          m_fileSystems);
     // The system's partition first, while it has none.
@@ -610,6 +612,8 @@ void PartitionPage::editPartition()
     const installer::PlannedPartition& partition = m_plan.partitions()[size_t(entry.partition)];
     m_dialog = std::make_unique<DialogWindow>(m_window, partition.isNew() ? tr("New Partition") : partition.path,
                                               kDialogWidth);
+    // Cancel closes it.
+    m_dialog->setCloseVisible(false);
     const PartitionEditor::Mode mode =
             partition.isNew() ? PartitionEditor::Mode::EditNew : PartitionEditor::Mode::EditExisting;
     auto* editor = m_dialog->setContent<PartitionEditor>(mode, m_uefi, m_plan.table() == "gpt", m_fileSystems);

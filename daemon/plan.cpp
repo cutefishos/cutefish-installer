@@ -185,16 +185,27 @@ std::optional<double> unsquashfsProgress(std::string_view line)
     return *percent / 100.0;
 }
 
-std::string codename(std::string_view osRelease)
+static std::string osReleaseValue(std::string_view osRelease, std::string_view key)
 {
     for (const std::string& line : strings::split(osRelease, '\n')) {
-        if (!line.starts_with("VERSION_CODENAME="))
+        if (!line.starts_with(key) || line.size() <= key.size() || line[key.size()] != '=')
             continue;
-        std::string value = line.substr(17);
+        std::string value = line.substr(key.size() + 1);
         value.erase(std::remove(value.begin(), value.end(), '"'), value.end());
         return value;
     }
     return {};
+}
+
+std::string codename(std::string_view osRelease)
+{
+    return osReleaseValue(osRelease, "VERSION_CODENAME");
+}
+
+std::string bootloaderId(std::string_view osRelease)
+{
+    const std::string id = osReleaseValue(osRelease, "ID");
+    return id.empty() ? "debian" : id;
 }
 
 } // namespace plan

@@ -419,7 +419,8 @@ bool InstallJob::installBootloader()
 
     std::vector<std::string> command;
     if (m_uefi) {
-        command = {"grub-install", "--target=" + plan::efiTarget(), "--efi-directory=/boot/efi", "--bootloader-id=debian",
+        const std::string id = plan::bootloaderId(file::read(inTarget("/etc/os-release")).value_or(""));
+        command = {"grub-install", "--target=" + plan::efiTarget(), "--efi-directory=/boot/efi", "--bootloader-id=" + id,
                    "--recheck"};
         // The removable media path boots firmware that forgets its entries;
         // on a shared EFI system partition it belongs to the other system.

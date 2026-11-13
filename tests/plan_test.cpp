@@ -92,6 +92,14 @@ TEST(Plan, codename)
     EXPECT_EQ(plan::codename("ID=debian\n"), "");
 }
 
+TEST(Plan, bootloaderId)
+{
+    EXPECT_EQ(plan::bootloaderId("PRETTY_NAME=\"Debian GNU/Linux 13 (trixie)\"\nID=debian\n"), "debian");
+    EXPECT_EQ(plan::bootloaderId("ID=ubuntu\nID_LIKE=debian\nVERSION_CODENAME=resolute\n"), "ubuntu");
+    EXPECT_EQ(plan::bootloaderId("ID=\"ubuntu\"\n"), "ubuntu");
+    EXPECT_EQ(plan::bootloaderId(""), "debian");
+}
+
 TEST(Plan, defaultLocale)
 {
     EXPECT_EQ(plan::defaultLocale("", "de_DE.UTF-8"), "LANG=de_DE.UTF-8\n");

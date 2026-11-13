@@ -69,5 +69,9 @@ std::optional<double> unsquashfsProgress(std::string_view line);
 
 // The VERSION_CODENAME of an os-release file.
 std::string codename(std::string_view osRelease);
+// The EFI directory the boot loader goes to: the system's ID from
+// /etc/os-release, which is where its signed GRUB looks for its
+// configuration (/EFI/debian, /EFI/ubuntu).
+std::string bootloaderId(std::string_view osRelease);
 
 } // namespace plan

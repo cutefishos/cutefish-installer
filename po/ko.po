@@ -1,0 +1,471 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: cutefish-installer\n"
+"Report-Msgid-Bugs-To: https://github.com/cutefishos\n"
+"POT-Creation-Date: 2026-11-13 18:15+0800\n"
+"PO-Revision-Date: 2026-11-13 17:29+0800\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: ko\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: common/partitioning.cpp
+msgid "The disk has no partition table. Create one first."
+msgstr "디스크에 파티션 테이블이 없습니다. 먼저 파티션 테이블을 만드십시오."
+
+#: common/partitioning.cpp
+msgid "A disk with an MBR partition table holds at most four partitions."
+msgstr "MBR 파티션 테이블을 사용하는 디스크에는 파티션을 최대 4개까지 만들 수 있습니다."
+
+#: common/partitioning.cpp
+#, python-brace-format
+msgid "“{mount}” is not a mount point the system can use."
+msgstr "“{mount}” 경로는 시스템에서 사용할 수 있는 마운트 지점이 아닙니다."
+
+#: common/partitioning.cpp
+#, python-brace-format
+msgid "Two partitions are given “{mount}”."
+msgstr "두 파티션에 같은 마운트 지점(“{mount}”)이 지정되어 있습니다."
+
+#: common/partitioning.cpp
+msgid "Only a disk with a GPT partition table needs a BIOS boot partition."
+msgstr "BIOS 부트 파티션은 GPT 파티션 테이블을 사용하는 디스크에만 필요합니다."
+
+#: common/partitioning.cpp
+msgid "Only a new partition, or one made for it, can be the BIOS boot partition."
+msgstr "새 파티션이나 BIOS 부트용으로 만든 파티션만 BIOS 부트 파티션으로 사용할 수 있습니다."
+
+#: common/partitioning.cpp
+#, python-brace-format
+msgid "The partition for “{mount}” must be formatted."
+msgstr "“{mount}” 파티션은 포맷해야 합니다."
+
+#: common/partitioning.cpp
+#, python-brace-format
+msgid "“{type}” cannot be used for “{mount}”."
+msgstr "“{type}” 파일 시스템은 “{mount}”에 사용할 수 없습니다."
+
+#: common/partitioning.cpp
+#, python-brace-format
+msgid "The partition for “{mount}” holds no file system; format it to use it there."
+msgstr "“{mount}” 파티션에 파일 시스템이 없습니다. 이 용도로 사용하려면 포맷하십시오."
+
+#: common/partitioning.cpp
+#, python-brace-format
+msgid "The partition for “{mount}” holds “{type}”; format it to use it there."
+msgstr "“{mount}” 파티션의 파일 시스템은 “{type}”입니다. 이 용도로 사용하려면 포맷하십시오."
+
+#: common/partitioning.cpp
+#, python-brace-format
+msgid "Choose a partition for the system: give one the mount point “{mount}”."
+msgstr "시스템용 파티션을 선택하십시오. 파티션 하나에 마운트 지점(“{mount}”)을 지정하십시오."
+
+#: common/partitioning.cpp
+#, python-brace-format
+msgid "The partition for “{mount}” needs at least {size} GB."
+msgstr "“{mount}” 파티션은 {size}GB 이상이어야 합니다."
+
+#: common/partitioning.cpp
+#, python-brace-format
+msgid "Choose an EFI system partition: give one the mount point “{mount}”."
+msgstr "EFI 시스템 파티션을 선택하십시오. 파티션 하나에 마운트 지점(“{mount}”)을 지정하십시오."
+
+#: common/partitioning.cpp
+msgid "The EFI system partition needs at least 32 MB."
+msgstr "EFI 시스템 파티션은 32MB 이상이어야 합니다."
+
+#: common/partitioning.cpp
+msgid "Add a 1 MB partition used as BIOS boot, for the boot loader."
+msgstr "부트 로더를 위해 BIOS 부트로 사용할 1MB 파티션을 추가하십시오."
+
+#: src/backend.cpp
+msgid "The installer service stopped unexpectedly."
+msgstr "설치 프로그램 서비스가 예기치 않게 중단되었습니다."
+
+#: src/backend.cpp
+msgid "The system bus cannot be reached."
+msgstr "시스템 버스에 연결할 수 없습니다."
+
+#: src/backend.cpp
+msgid "The disks cannot be listed."
+msgstr "디스크 목록을 가져올 수 없습니다."
+
+#: src/backend.cpp
+msgid "The file systems cannot be listed."
+msgstr "파일 시스템 목록을 가져올 수 없습니다."
+
+#: src/backend.cpp
+msgid "The partitions cannot be read."
+msgstr "파티션을 읽을 수 없습니다."
+
+#: src/installerwindow.cpp data/cutefish-installer.desktop
+#: data/cutefish-installer-autostart.desktop
+msgid "Install Cutefish"
+msgstr "Cutefish 설치"
+
+#: src/installerwindow.cpp
+msgid "Back"
+msgstr "뒤로"
+
+#: src/installerwindow.cpp
+msgid "Continue"
+msgstr "계속"
+
+#: src/installerwindow.cpp
+msgid "Try Cutefish"
+msgstr "Cutefish 체험하기"
+
+#: src/installerwindow.cpp
+msgid "Next"
+msgstr "다음"
+
+#: src/installerwindow.cpp
+msgid "Install"
+msgstr "설치"
+
+#: src/installerwindow.cpp
+msgid "Erase Disk and Install"
+msgstr "디스크를 지우고 설치"
+
+#. TRANSLATORS: After a successful installation: go on using the live system instead of restarting.
+#: src/installerwindow.cpp
+msgid "Keep Trying"
+msgstr "계속 체험하기"
+
+#: src/installerwindow.cpp
+msgid "Close"
+msgstr "닫기"
+
+#: src/installerwindow.cpp
+msgid "Restart Now"
+msgstr "지금 다시 시작"
+
+#: src/installerwindow.cpp
+msgid "Try Again"
+msgstr "다시 시도"
+
+#: src/pages.cpp
+msgid "Choose Your Language"
+msgstr "언어 선택"
+
+#: src/pages.cpp
+msgid "The installer and the installed system use this language."
+msgstr "설치 프로그램과 설치된 시스템에서 이 언어를 사용합니다."
+
+#: src/pages.cpp
+msgid "Welcome to Cutefish"
+msgstr "Cutefish에 오신 것을 환영합니다"
+
+#: src/pages.cpp
+msgid "Try Cutefish without changing your computer, or install it now."
+msgstr "컴퓨터를 변경하지 않고 Cutefish를 체험하거나 지금 설치할 수 있습니다."
+
+#: src/pages.cpp
+msgid "Choose a Disk"
+msgstr "디스크 선택"
+
+#: src/pages.cpp
+msgid "Cutefish uses the whole disk. Everything on it will be erased."
+msgstr "Cutefish가 디스크 전체를 사용합니다. 디스크의 모든 내용이 지워집니다."
+
+#: src/pages.cpp
+msgid "Partition manually"
+msgstr "수동으로 파티션 나누기"
+
+#: src/pages.cpp
+msgid "Choose the partitions on the next page."
+msgstr "다음 페이지에서 파티션을 선택합니다."
+
+#. TRANSLATORS: Beside a disk; {size} is a size such as "12.0 GB".
+#: src/pages.cpp
+#, python-brace-format
+msgid "Too small, needs {size}"
+msgstr "공간 부족, {size} 필요"
+
+#: src/pages.cpp
+msgid "No disk was found to install on."
+msgstr "설치할 디스크를 찾을 수 없습니다."
+
+#: src/pages.cpp
+#, python-brace-format
+msgid "The disks cannot be listed: {error}"
+msgstr "디스크 목록을 가져올 수 없습니다: {error}"
+
+#: src/pages.cpp
+msgid "Create Your Account"
+msgstr "계정 만들기"
+
+#: src/pages.cpp
+msgid "This account can change settings and install software."
+msgstr "이 계정으로 설정을 변경하고 소프트웨어를 설치할 수 있습니다."
+
+#: src/pages.cpp
+msgid "Full name"
+msgstr "전체 이름"
+
+#: src/pages.cpp
+msgid "User name"
+msgstr "사용자 이름"
+
+#: src/pages.cpp
+msgid "Computer name"
+msgstr "컴퓨터 이름"
+
+#: src/pages.cpp
+msgid "Password"
+msgstr "암호"
+
+#: src/pages.cpp
+msgid "Confirm password"
+msgstr "암호 확인"
+
+#. TRANSLATORS: In an empty field that must be filled in.
+#: src/pages.cpp
+msgid "Required"
+msgstr "필수"
+
+#: src/pages.cpp
+msgid "A user name starts with a lower-case letter and uses only a–z, 0–9, “-” and “_”."
+msgstr "사용자 이름은 영문 소문자로 시작해야 하며 a–z, 0–9, “-”, “_”만 사용할 수 있습니다."
+
+#: src/pages.cpp
+#, python-brace-format
+msgid "“{name}” is taken by the system. Choose another user name."
+msgstr "“{name}” 이름은 시스템에서 사용 중입니다. 다른 사용자 이름을 선택하십시오."
+
+#: src/pages.cpp
+msgid "A computer name uses only letters, digits and hyphens, and does not start or end with a hyphen."
+msgstr "컴퓨터 이름에는 영문자, 숫자, 하이픈만 사용할 수 있으며 하이픈으로 시작하거나 끝날 수 없습니다."
+
+#: src/pages.cpp
+msgid "The passwords do not match."
+msgstr "암호가 일치하지 않습니다."
+
+#: src/pages.cpp
+msgid "Choose Your Time Zone"
+msgstr "시간대 선택"
+
+#: src/pages.cpp
+msgid "The clock follows the time zone. You can change it later in Settings."
+msgstr "시계는 시간대를 따릅니다. 나중에 설정에서 변경할 수 있습니다."
+
+#: src/pages.cpp
+msgid "Search for a city or country"
+msgstr "도시 또는 국가 검색"
+
+#: src/pages.cpp
+msgid "Ready to Install"
+msgstr "설치 준비 완료"
+
+#: src/pages.cpp
+msgid "Check your choices. Go back to change any of them."
+msgstr "선택한 내용을 확인하십시오. 변경하려면 뒤로 돌아가십시오."
+
+#: src/pages.cpp
+msgid "Disk"
+msgstr "디스크"
+
+#: src/pages.cpp
+msgid "Time zone"
+msgstr "시간대"
+
+#. TRANSLATORS: {disk} is a disk's name and size, such as "Samsung SSD (512.1 GB)".
+#: src/pages.cpp
+#, python-brace-format
+msgid "Partitioned manually, {disk}"
+msgstr "수동 파티션, {disk}"
+
+#: src/pages.cpp
+#, python-brace-format
+msgid "Everything on {disk} will be erased. This cannot be undone."
+msgstr "{disk}의 모든 내용이 지워집니다. 이 작업은 되돌릴 수 없습니다."
+
+#: src/pages.cpp
+#, python-brace-format
+msgid "Every partition on {disk} will be deleted. This cannot be undone."
+msgstr "{disk}의 모든 파티션이 삭제됩니다. 이 작업은 되돌릴 수 없습니다."
+
+#: src/pages.cpp
+#, python-brace-format
+msgid "Everything on {partitions} will be erased. This cannot be undone."
+msgstr "{partitions}의 모든 내용이 지워집니다. 이 작업은 되돌릴 수 없습니다."
+
+#: src/pages.cpp
+msgid "No existing partition is erased."
+msgstr "기존 파티션은 지워지지 않습니다."
+
+#: src/pages.cpp
+msgid "Installing Cutefish"
+msgstr "Cutefish 설치 중"
+
+#: src/pages.cpp
+msgid "Keep the computer on until the installation is complete."
+msgstr "설치가 완료될 때까지 컴퓨터를 끄지 마십시오."
+
+#: src/pages.cpp
+msgid "Preparing the disk…"
+msgstr "디스크 준비 중…"
+
+#: src/pages.cpp
+msgid "Copying the system…"
+msgstr "시스템 복사 중…"
+
+#: src/pages.cpp
+msgid "Setting up your account and settings…"
+msgstr "계정 및 설정 구성 중…"
+
+#: src/pages.cpp
+msgid "Installing the boot loader…"
+msgstr "부트 로더 설치 중…"
+
+#: src/pages.cpp
+msgid "Finishing…"
+msgstr "마무리하는 중…"
+
+#: src/pages.cpp
+msgid "Cutefish Is Installed"
+msgstr "Cutefish 설치 완료"
+
+#: src/pages.cpp
+msgid "Restart the computer and remove the installation medium to start using Cutefish."
+msgstr "Cutefish를 사용하려면 컴퓨터를 다시 시작하고 설치 미디어를 제거하십시오."
+
+#: src/pages.cpp
+msgid "The Installation Failed"
+msgstr "설치 실패"
+
+#: src/pages.cpp
+#, python-brace-format
+msgid "Cutefish could not be installed. The details are in {path}."
+msgstr "Cutefish를 설치할 수 없습니다. 자세한 내용은 {path} 파일에 있습니다."
+
+#. TRANSLATORS: What a partition is used for: nothing.
+#: src/partitionpage.cpp
+msgid "Not used"
+msgstr "사용 안 함"
+
+#. TRANSLATORS: What a partition is used for; {mount} is "/".
+#: src/partitionpage.cpp
+#, python-brace-format
+msgid "{mount} (system)"
+msgstr "{mount}(시스템)"
+
+#. TRANSLATORS: What a partition is used for; {mount} is "/boot/efi".
+#: src/partitionpage.cpp
+#, python-brace-format
+msgid "{mount} (EFI system)"
+msgstr "{mount}(EFI 시스템)"
+
+#. TRANSLATORS: What a partition is used for: swap space.
+#: src/partitionpage.cpp
+msgid "Swap"
+msgstr "스왑"
+
+#. TRANSLATORS: What a partition is used for: the boot loader on a computer without UEFI.
+#: src/partitionpage.cpp
+msgid "BIOS boot"
+msgstr "BIOS 부트"
+
+#. TRANSLATORS: Marks a partition that exists and will be formatted.
+#: src/partitionpage.cpp
+msgid "Format"
+msgstr "포맷"
+
+#: src/partitionpage.cpp
+msgid "Free space"
+msgstr "여유 공간"
+
+#: src/partitionpage.cpp
+msgid "New partition"
+msgstr "새 파티션"
+
+#: src/partitionpage.cpp
+msgid "Size"
+msgstr "크기"
+
+#: src/partitionpage.cpp
+msgid "Use as"
+msgstr "용도"
+
+#: src/partitionpage.cpp
+msgid "File system"
+msgstr "파일 시스템"
+
+#: src/partitionpage.cpp
+msgid "Format this partition"
+msgstr "이 파티션 포맷"
+
+#: src/partitionpage.cpp
+msgid "Cancel"
+msgstr "취소"
+
+#: src/partitionpage.cpp
+msgid "Add"
+msgstr "추가"
+
+#: src/partitionpage.cpp
+msgid "Save"
+msgstr "저장"
+
+#: src/partitionpage.cpp
+msgid "Partition the Disk"
+msgstr "디스크 파티션 나누기"
+
+#: src/partitionpage.cpp
+msgid "New Partition Table"
+msgstr "새 파티션 테이블"
+
+#: src/partitionpage.cpp
+msgid "Add…"
+msgstr "추가…"
+
+#: src/partitionpage.cpp
+msgid "Edit…"
+msgstr "편집…"
+
+#: src/partitionpage.cpp
+msgid "Delete"
+msgstr "삭제"
+
+#. TRANSLATORS: "Partition" is the header of the column of partition names.
+#: src/partitionpage.cpp
+msgid "Partition"
+msgstr "파티션"
+
+#: src/partitionpage.cpp
+#, python-brace-format
+msgid "Nothing changes on {disk} until you install."
+msgstr "설치하기 전까지는 {disk}에 아무것도 변경되지 않습니다."
+
+#: src/partitionpage.cpp
+#, python-brace-format
+msgid "The partitions cannot be read: {error}"
+msgstr "파티션을 읽을 수 없습니다: {error}"
+
+#: src/partitionpage.cpp
+msgid "Create a new partition table?"
+msgstr "새 파티션 테이블을 만들겠습니까?"
+
+#: src/partitionpage.cpp
+#, python-brace-format
+msgid "Every partition on {disk} will be deleted when Cutefish is installed."
+msgstr "Cutefish를 설치하면 {disk}의 모든 파티션이 삭제됩니다."
+
+#: src/partitionpage.cpp
+msgid "Add Partition"
+msgstr "파티션 추가"
+
+#: src/partitionpage.cpp
+msgid "New Partition"
+msgstr "새 파티션"
+
+#: data/cutefish-installer.desktop
+msgid "Install Cutefish on this computer"
+msgstr "이 컴퓨터에 Cutefish를 설치합니다"
+
+#: data/cutefish-installer.desktop
+msgid "Installer;Install;Setup;Disk;"
+msgstr "설치 프로그램;설치;셋업;디스크;Installer;Install;Setup;Disk;"

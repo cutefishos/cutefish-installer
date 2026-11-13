@@ -1,0 +1,471 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: cutefish-installer\n"
+"Report-Msgid-Bugs-To: https://github.com/cutefishos\n"
+"POT-Creation-Date: 2026-11-13 18:15+0800\n"
+"PO-Revision-Date: 2026-11-13 17:29+0800\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: it\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: common/partitioning.cpp
+msgid "The disk has no partition table. Create one first."
+msgstr "Il disco non ha una tabella delle partizioni. Creane prima una."
+
+#: common/partitioning.cpp
+msgid "A disk with an MBR partition table holds at most four partitions."
+msgstr "Un disco con tabella delle partizioni MBR può contenere al massimo quattro partizioni."
+
+#: common/partitioning.cpp
+#, python-brace-format
+msgid "“{mount}” is not a mount point the system can use."
+msgstr "“{mount}” non è un punto di mount utilizzabile dal sistema."
+
+#: common/partitioning.cpp
+#, python-brace-format
+msgid "Two partitions are given “{mount}”."
+msgstr "“{mount}” è assegnato a due partizioni."
+
+#: common/partitioning.cpp
+msgid "Only a disk with a GPT partition table needs a BIOS boot partition."
+msgstr "Solo un disco con tabella delle partizioni GPT richiede una partizione BIOS boot."
+
+#: common/partitioning.cpp
+msgid "Only a new partition, or one made for it, can be the BIOS boot partition."
+msgstr "Solo una partizione nuova, o creata apposta, può essere la partizione BIOS boot."
+
+#: common/partitioning.cpp
+#, python-brace-format
+msgid "The partition for “{mount}” must be formatted."
+msgstr "La partizione per “{mount}” deve essere formattata."
+
+#: common/partitioning.cpp
+#, python-brace-format
+msgid "“{type}” cannot be used for “{mount}”."
+msgstr "“{type}” non può essere usato per “{mount}”."
+
+#: common/partitioning.cpp
+#, python-brace-format
+msgid "The partition for “{mount}” holds no file system; format it to use it there."
+msgstr "La partizione per “{mount}” non contiene un file system; formattala per usarla lì."
+
+#: common/partitioning.cpp
+#, python-brace-format
+msgid "The partition for “{mount}” holds “{type}”; format it to use it there."
+msgstr "La partizione per “{mount}” contiene “{type}”; formattala per usarla lì."
+
+#: common/partitioning.cpp
+#, python-brace-format
+msgid "Choose a partition for the system: give one the mount point “{mount}”."
+msgstr "Scegli una partizione per il sistema: assegna a una partizione il punto di mount “{mount}”."
+
+#: common/partitioning.cpp
+#, python-brace-format
+msgid "The partition for “{mount}” needs at least {size} GB."
+msgstr "La partizione per “{mount}” deve avere almeno {size} GB."
+
+#: common/partitioning.cpp
+#, python-brace-format
+msgid "Choose an EFI system partition: give one the mount point “{mount}”."
+msgstr "Scegli una partizione di sistema EFI: assegna a una partizione il punto di mount “{mount}”."
+
+#: common/partitioning.cpp
+msgid "The EFI system partition needs at least 32 MB."
+msgstr "La partizione di sistema EFI deve avere almeno 32 MB."
+
+#: common/partitioning.cpp
+msgid "Add a 1 MB partition used as BIOS boot, for the boot loader."
+msgstr "Aggiungi una partizione da 1 MB usata come BIOS boot, per il boot loader."
+
+#: src/backend.cpp
+msgid "The installer service stopped unexpectedly."
+msgstr "Il servizio di installazione si è arrestato in modo imprevisto."
+
+#: src/backend.cpp
+msgid "The system bus cannot be reached."
+msgstr "Impossibile raggiungere il bus di sistema."
+
+#: src/backend.cpp
+msgid "The disks cannot be listed."
+msgstr "Impossibile elencare i dischi."
+
+#: src/backend.cpp
+msgid "The file systems cannot be listed."
+msgstr "Impossibile elencare i file system."
+
+#: src/backend.cpp
+msgid "The partitions cannot be read."
+msgstr "Impossibile leggere le partizioni."
+
+#: src/installerwindow.cpp data/cutefish-installer.desktop
+#: data/cutefish-installer-autostart.desktop
+msgid "Install Cutefish"
+msgstr "Installa Cutefish"
+
+#: src/installerwindow.cpp
+msgid "Back"
+msgstr "Indietro"
+
+#: src/installerwindow.cpp
+msgid "Continue"
+msgstr "Continua"
+
+#: src/installerwindow.cpp
+msgid "Try Cutefish"
+msgstr "Prova Cutefish"
+
+#: src/installerwindow.cpp
+msgid "Next"
+msgstr "Continua"
+
+#: src/installerwindow.cpp
+msgid "Install"
+msgstr "Installa"
+
+#: src/installerwindow.cpp
+msgid "Erase Disk and Install"
+msgstr "Cancella il disco e installa"
+
+#. TRANSLATORS: After a successful installation: go on using the live system instead of restarting.
+#: src/installerwindow.cpp
+msgid "Keep Trying"
+msgstr "Continua a provare"
+
+#: src/installerwindow.cpp
+msgid "Close"
+msgstr "Chiudi"
+
+#: src/installerwindow.cpp
+msgid "Restart Now"
+msgstr "Riavvia ora"
+
+#: src/installerwindow.cpp
+msgid "Try Again"
+msgstr "Riprova"
+
+#: src/pages.cpp
+msgid "Choose Your Language"
+msgstr "Scegli la lingua"
+
+#: src/pages.cpp
+msgid "The installer and the installed system use this language."
+msgstr "Il programma di installazione e il sistema installato useranno questa lingua."
+
+#: src/pages.cpp
+msgid "Welcome to Cutefish"
+msgstr "Ti diamo il benvenuto in Cutefish"
+
+#: src/pages.cpp
+msgid "Try Cutefish without changing your computer, or install it now."
+msgstr "Prova Cutefish senza modificare il computer, oppure installalo subito."
+
+#: src/pages.cpp
+msgid "Choose a Disk"
+msgstr "Scegli un disco"
+
+#: src/pages.cpp
+msgid "Cutefish uses the whole disk. Everything on it will be erased."
+msgstr "Cutefish usa l’intero disco. Tutto il suo contenuto verrà cancellato."
+
+#: src/pages.cpp
+msgid "Partition manually"
+msgstr "Partiziona manualmente"
+
+#: src/pages.cpp
+msgid "Choose the partitions on the next page."
+msgstr "Scegli le partizioni nella pagina successiva."
+
+#. TRANSLATORS: Beside a disk; {size} is a size such as "12.0 GB".
+#: src/pages.cpp
+#, python-brace-format
+msgid "Too small, needs {size}"
+msgstr "Troppo piccolo, servono {size}"
+
+#: src/pages.cpp
+msgid "No disk was found to install on."
+msgstr "Non è stato trovato alcun disco su cui installare."
+
+#: src/pages.cpp
+#, python-brace-format
+msgid "The disks cannot be listed: {error}"
+msgstr "Impossibile elencare i dischi: {error}"
+
+#: src/pages.cpp
+msgid "Create Your Account"
+msgstr "Crea il tuo account"
+
+#: src/pages.cpp
+msgid "This account can change settings and install software."
+msgstr "Questo account può modificare le impostazioni e installare software."
+
+#: src/pages.cpp
+msgid "Full name"
+msgstr "Nome completo"
+
+#: src/pages.cpp
+msgid "User name"
+msgstr "Nome utente"
+
+#: src/pages.cpp
+msgid "Computer name"
+msgstr "Nome del computer"
+
+#: src/pages.cpp
+msgid "Password"
+msgstr "Password"
+
+#: src/pages.cpp
+msgid "Confirm password"
+msgstr "Conferma password"
+
+#. TRANSLATORS: In an empty field that must be filled in.
+#: src/pages.cpp
+msgid "Required"
+msgstr "Obbligatorio"
+
+#: src/pages.cpp
+msgid "A user name starts with a lower-case letter and uses only a–z, 0–9, “-” and “_”."
+msgstr "Un nome utente inizia con una lettera minuscola e usa solo a–z, 0–9, “-” e “_”."
+
+#: src/pages.cpp
+#, python-brace-format
+msgid "“{name}” is taken by the system. Choose another user name."
+msgstr "“{name}” è riservato al sistema. Scegli un altro nome utente."
+
+#: src/pages.cpp
+msgid "A computer name uses only letters, digits and hyphens, and does not start or end with a hyphen."
+msgstr "Un nome del computer usa solo lettere, cifre e trattini, e non inizia né finisce con un trattino."
+
+#: src/pages.cpp
+msgid "The passwords do not match."
+msgstr "Le password non corrispondono."
+
+#: src/pages.cpp
+msgid "Choose Your Time Zone"
+msgstr "Scegli il fuso orario"
+
+#: src/pages.cpp
+msgid "The clock follows the time zone. You can change it later in Settings."
+msgstr "L’orologio segue il fuso orario. Puoi cambiarlo in seguito in Impostazioni."
+
+#: src/pages.cpp
+msgid "Search for a city or country"
+msgstr "Cerca una città o un paese"
+
+#: src/pages.cpp
+msgid "Ready to Install"
+msgstr "Tutto pronto per l’installazione"
+
+#: src/pages.cpp
+msgid "Check your choices. Go back to change any of them."
+msgstr "Controlla le tue scelte. Torna indietro per modificarle."
+
+#: src/pages.cpp
+msgid "Disk"
+msgstr "Disco"
+
+#: src/pages.cpp
+msgid "Time zone"
+msgstr "Fuso orario"
+
+#. TRANSLATORS: {disk} is a disk's name and size, such as "Samsung SSD (512.1 GB)".
+#: src/pages.cpp
+#, python-brace-format
+msgid "Partitioned manually, {disk}"
+msgstr "Partizionato manualmente, {disk}"
+
+#: src/pages.cpp
+#, python-brace-format
+msgid "Everything on {disk} will be erased. This cannot be undone."
+msgstr "Tutto il contenuto di {disk} verrà cancellato. L’operazione non può essere annullata."
+
+#: src/pages.cpp
+#, python-brace-format
+msgid "Every partition on {disk} will be deleted. This cannot be undone."
+msgstr "Tutte le partizioni di {disk} verranno eliminate. L’operazione non può essere annullata."
+
+#: src/pages.cpp
+#, python-brace-format
+msgid "Everything on {partitions} will be erased. This cannot be undone."
+msgstr "Tutto il contenuto di {partitions} verrà cancellato. L’operazione non può essere annullata."
+
+#: src/pages.cpp
+msgid "No existing partition is erased."
+msgstr "Nessuna partizione esistente verrà cancellata."
+
+#: src/pages.cpp
+msgid "Installing Cutefish"
+msgstr "Installazione di Cutefish"
+
+#: src/pages.cpp
+msgid "Keep the computer on until the installation is complete."
+msgstr "Tieni acceso il computer fino al termine dell’installazione."
+
+#: src/pages.cpp
+msgid "Preparing the disk…"
+msgstr "Preparazione del disco…"
+
+#: src/pages.cpp
+msgid "Copying the system…"
+msgstr "Copia del sistema…"
+
+#: src/pages.cpp
+msgid "Setting up your account and settings…"
+msgstr "Configurazione dell’account e delle impostazioni…"
+
+#: src/pages.cpp
+msgid "Installing the boot loader…"
+msgstr "Installazione del boot loader…"
+
+#: src/pages.cpp
+msgid "Finishing…"
+msgstr "Completamento…"
+
+#: src/pages.cpp
+msgid "Cutefish Is Installed"
+msgstr "Cutefish è installato"
+
+#: src/pages.cpp
+msgid "Restart the computer and remove the installation medium to start using Cutefish."
+msgstr "Riavvia il computer e rimuovi il supporto di installazione per iniziare a usare Cutefish."
+
+#: src/pages.cpp
+msgid "The Installation Failed"
+msgstr "Installazione non riuscita"
+
+#: src/pages.cpp
+#, python-brace-format
+msgid "Cutefish could not be installed. The details are in {path}."
+msgstr "Impossibile installare Cutefish. I dettagli si trovano in {path}."
+
+#. TRANSLATORS: What a partition is used for: nothing.
+#: src/partitionpage.cpp
+msgid "Not used"
+msgstr "Non usata"
+
+#. TRANSLATORS: What a partition is used for; {mount} is "/".
+#: src/partitionpage.cpp
+#, python-brace-format
+msgid "{mount} (system)"
+msgstr "{mount} (sistema)"
+
+#. TRANSLATORS: What a partition is used for; {mount} is "/boot/efi".
+#: src/partitionpage.cpp
+#, python-brace-format
+msgid "{mount} (EFI system)"
+msgstr "{mount} (sistema EFI)"
+
+#. TRANSLATORS: What a partition is used for: swap space.
+#: src/partitionpage.cpp
+msgid "Swap"
+msgstr "Swap"
+
+#. TRANSLATORS: What a partition is used for: the boot loader on a computer without UEFI.
+#: src/partitionpage.cpp
+msgid "BIOS boot"
+msgstr "BIOS boot"
+
+#. TRANSLATORS: Marks a partition that exists and will be formatted.
+#: src/partitionpage.cpp
+msgid "Format"
+msgstr "Da formattare"
+
+#: src/partitionpage.cpp
+msgid "Free space"
+msgstr "Spazio libero"
+
+#: src/partitionpage.cpp
+msgid "New partition"
+msgstr "Nuova partizione"
+
+#: src/partitionpage.cpp
+msgid "Size"
+msgstr "Dimensione"
+
+#: src/partitionpage.cpp
+msgid "Use as"
+msgstr "Usa come"
+
+#: src/partitionpage.cpp
+msgid "File system"
+msgstr "File system"
+
+#: src/partitionpage.cpp
+msgid "Format this partition"
+msgstr "Formatta questa partizione"
+
+#: src/partitionpage.cpp
+msgid "Cancel"
+msgstr "Annulla"
+
+#: src/partitionpage.cpp
+msgid "Add"
+msgstr "Aggiungi"
+
+#: src/partitionpage.cpp
+msgid "Save"
+msgstr "Salva"
+
+#: src/partitionpage.cpp
+msgid "Partition the Disk"
+msgstr "Partiziona il disco"
+
+#: src/partitionpage.cpp
+msgid "New Partition Table"
+msgstr "Nuova tabella delle partizioni"
+
+#: src/partitionpage.cpp
+msgid "Add…"
+msgstr "Aggiungi…"
+
+#: src/partitionpage.cpp
+msgid "Edit…"
+msgstr "Modifica…"
+
+#: src/partitionpage.cpp
+msgid "Delete"
+msgstr "Elimina"
+
+#. TRANSLATORS: "Partition" is the header of the column of partition names.
+#: src/partitionpage.cpp
+msgid "Partition"
+msgstr "Partizione"
+
+#: src/partitionpage.cpp
+#, python-brace-format
+msgid "Nothing changes on {disk} until you install."
+msgstr "Su {disk} non cambia nulla finché non avvii l’installazione."
+
+#: src/partitionpage.cpp
+#, python-brace-format
+msgid "The partitions cannot be read: {error}"
+msgstr "Impossibile leggere le partizioni: {error}"
+
+#: src/partitionpage.cpp
+msgid "Create a new partition table?"
+msgstr "Creare una nuova tabella delle partizioni?"
+
+#: src/partitionpage.cpp
+#, python-brace-format
+msgid "Every partition on {disk} will be deleted when Cutefish is installed."
+msgstr "Tutte le partizioni di {disk} verranno eliminate durante l’installazione di Cutefish."
+
+#: src/partitionpage.cpp
+msgid "Add Partition"
+msgstr "Aggiungi partizione"
+
+#: src/partitionpage.cpp
+msgid "New Partition"
+msgstr "Nuova partizione"
+
+#: data/cutefish-installer.desktop
+msgid "Install Cutefish on this computer"
+msgstr "Installa Cutefish su questo computer"
+
+#: data/cutefish-installer.desktop
+msgid "Installer;Install;Setup;Disk;"
+msgstr "Installazione;Installa;Programma di installazione;Configurazione;Disco;Installer;"

@@ -1,3 +1,6 @@
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(InstallerIcu REQUIRED IMPORTED_TARGET icu-uc icu-i18n)
+
 add_library(installer-ui STATIC
     backend.cpp
     backend.h
@@ -5,6 +8,8 @@ add_library(installer-ui STATIC
     components.h
     installerwindow.cpp
     installerwindow.h
+    languages.cpp
+    languages.h
     pages.cpp
     pages.h
     partitionpage.cpp
@@ -15,7 +20,7 @@ add_library(installer-ui STATIC
 target_include_directories(installer-ui PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_compile_definitions(installer-ui PRIVATE
     INSTALLER_DATA_DIR="${CMAKE_INSTALL_FULL_DATADIR}/cutefish-installer")
-target_link_libraries(installer-ui PUBLIC installer-common Cutefish::Toolkit)
+target_link_libraries(installer-ui PUBLIC installer-common Cutefish::Toolkit PRIVATE PkgConfig::InstallerIcu)
 
 add_executable(cutefish-installer main.cpp)
 target_compile_definitions(cutefish-installer PRIVATE INSTALLER_VERSION="${PROJECT_VERSION}")

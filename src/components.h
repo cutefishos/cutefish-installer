@@ -122,7 +122,8 @@ private:
     bool m_pressed = false;
 };
 
-// A row of a summary: what on the left, its value on the right.
+// A row of a summary: what on the left, its value on the right. A value too
+// long for one line wraps, and the row grows by its lines.
 class SummaryRow : public cutefish::ui::View
 {
 public:
@@ -130,7 +131,9 @@ public:
 
     void setValue(std::string value);
     void setSeparatorVisible(bool visible);
+    double heightForWidth(double width) const override;
 
+    // With a value of one line.
     static constexpr double kHeight = 44;
 
 protected:
@@ -138,6 +141,8 @@ protected:
     void paint(cutefish::ui::Painter& painter) override;
 
 private:
+    double valueLeft() const;
+
     cutefish::ui::Label* m_text;
     cutefish::ui::Label* m_value;
     bool m_separator = true;

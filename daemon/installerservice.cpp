@@ -213,6 +213,8 @@ std::string InstallerService::checkOptions(const installer::Options& options, in
         return "Not a valid computer name: " + options.hostName;
     if (!installer::isValidTimeZone(options.timeZone))
         return "Not a time zone: " + options.timeZone;
+    if (!options.language.empty() && !installer::isValidLocale(options.language))
+        return "Not a locale the system can use: " + options.language;
     return {};
 }
 

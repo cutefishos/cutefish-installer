@@ -44,6 +44,10 @@ public:
     // Empty when the system was installed, what went wrong otherwise.
     std::string run();
 
+    // Sets the system below the root to start in the locale, once locale-gen
+    // has made it.
+    static bool writeLanguage(const std::string& root, const std::string& locale);
+
 private:
     bool install();
     bool releaseDisk();

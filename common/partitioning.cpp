@@ -281,18 +281,22 @@ std::string PartitionPlan::problem(bool uefi) const
                                                    : isLinuxFileSystem(fsType);
         if (!fits && partition.format)
             return format(tr("“{type}” cannot be used for “{mount}”."), {{"type", fsType}, {"mount", mountPoint}});
+        if (!fits && fsType.empty())
+            return format(tr("The partition for “{mount}” holds no file system; format it to use it there."),
+                          {{"mount", mountPoint}});
         if (!fits)
             return format(tr("The partition for “{mount}” holds “{type}”; format it to use it there."),
-                          {{"mount", mountPoint}, {"type", fsType.empty() ? tr("nothing") : fsType}});
+                          {{"mount", mountPoint}, {"type", fsType}});
     }
 
     if (!root)
-        return tr("Choose a partition for the system: give one the mount point “/”.");
+        return format(tr("Choose a partition for the system: give one the mount point “{mount}”."), {{"mount", "/"}});
     if (root->size < kMinimumRootSize)
-        return format(tr("The partition for “/” needs at least {size} GB."),
-                      {{"size", std::to_string(kMinimumRootSize / 1'000'000'000)}});
+        return format(tr("The partition for “{mount}” needs at least {size} GB."),
+                      {{"mount", "/"}, {"size", std::to_string(kMinimumRootSize / 1'000'000'000)}});
     if (uefi && !esp)
-        return tr("Choose an EFI system partition: give one the mount point “/boot/efi”.");
+        return format(tr("Choose an EFI system partition: give one the mount point “{mount}”."),
+                      {{"mount", "/boot/efi"}});
     if (esp && esp->size < kMinimumEspSize)
         return tr("The EFI system partition needs at least 32 MB.");
     if (!uefi && table() == "gpt" && !biosBoot)

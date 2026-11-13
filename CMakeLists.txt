@@ -16,7 +16,7 @@ add_subdirectory(src)
 
 install(FILES data/logo.svg DESTINATION ${CMAKE_INSTALL_DATADIR}/cutefish-installer)
 
-cutefish_add_translations(cutefish-installer SOURCES src
+cutefish_add_translations(cutefish-installer SOURCES src common
                           DESKTOP_FILES data/cutefish-installer.desktop data/cutefish-installer-autostart.desktop)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/cutefish-installer.desktop DESTINATION ${CMAKE_INSTALL_DATADIR}/applications)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/cutefish-installer-autostart.desktop

@@ -3,6 +3,7 @@
 
 #include "installer.h"
 
+#include "base/file.h"
 #include "base/strings.h"
 
 #include <sys/stat.h>
@@ -27,6 +28,8 @@ dbus::VariantMap toMap(const Options& options)
             {"hostName", dbus::Variant(options.hostName)},
             {"timeZone", dbus::Variant(options.timeZone)},
     };
+    if (!options.language.empty())
+        map["language"] = dbus::Variant(options.language);
     if (!options.partitioning.empty())
         map["partitioning"] = dbus::Variant(options.partitioning);
     return map;
@@ -50,6 +53,12 @@ std::optional<Options> optionsFromMap(const dbus::VariantMap& map)
         if (!text)
             return std::nullopt;
         *value = *text;
+    }
+    if (const auto found = map.find("language"); found != map.end()) {
+        const std::optional<std::string> language = found->second.get<std::string>();
+        if (!language)
+            return std::nullopt;
+        options.language = *language;
     }
     if (const auto found = map.find("partitioning"); found != map.end()) {
         const std::optional<dbus::VariantMap> partitioning = found->second.get<dbus::VariantMap>();
@@ -82,6 +91,16 @@ bool isValidHostName(std::string_view name)
             return false;
     }
     return true;
+}
+
+bool isValidLocale(const std::string& locale, const std::string& supported)
+{
+    const std::optional<std::string> list = cutefish::base::file::read(supported);
+    for (const std::string& line : strings::split(list.value_or(""), '\n')) {
+        if (strings::splitWhitespace(line) == std::vector<std::string> {locale, "UTF-8"})
+            return true;
+    }
+    return false;
 }
 
 bool isValidTimeZone(const std::string& zone, const std::string& zoneinfo)

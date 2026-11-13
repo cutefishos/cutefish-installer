@@ -32,6 +32,9 @@ struct Options
     std::string password;
     std::string hostName;
     std::string timeZone;
+    // The locale the installed system starts in, such as "de_DE.UTF-8";
+    // empty keeps the live system's.
+    std::string language;
     // A PartitionPlan's toMap(), empty to erase the disk.
     cutefish::base::dbus::VariantMap partitioning;
 };
@@ -43,6 +46,9 @@ std::optional<Options> optionsFromMap(const cutefish::base::dbus::VariantMap& ma
 bool isValidUserName(std::string_view name);
 // One label of a host name: letters, digits and inner hyphens.
 bool isValidHostName(std::string_view name);
+// A locale the system can generate in UTF-8, as the SUPPORTED file lists it,
+// such as "de_DE.UTF-8".
+bool isValidLocale(const std::string& locale, const std::string& supported = "/usr/share/i18n/SUPPORTED");
 // An Area/Location name below `zoneinfo` that names a zone file.
 bool isValidTimeZone(const std::string& zone, const std::string& zoneinfo = "/usr/share/zoneinfo");
 // The first word of the full name in lower case, when it is plain ASCII;

@@ -46,6 +46,7 @@ public:
         shadow = addChild<PanelShadow>();
         panel = addChild<Panel>();
         pages = panel->addChild<View>();
+        back = panel->addChild<DialogButton>();
         secondary = panel->addChild<DialogButton>();
         primary = panel->addChild<DialogButton>(std::string(), true);
     }
@@ -54,6 +55,7 @@ public:
     PanelShadow* shadow;
     Panel* panel;
     View* pages;
+    DialogButton* back;
     DialogButton* secondary;
     DialogButton* primary;
 
@@ -76,7 +78,7 @@ protected:
             page->setGeometry(pages->localRect());
 
         std::vector<DialogButton*> shown;
-        for (DialogButton* button : {secondary, primary}) {
+        for (DialogButton* button : {back, secondary, primary}) {
             if (button->isVisible())
                 shown.push_back(button);
         }
@@ -107,24 +109,15 @@ InstallerWindow::InstallerWindow(Backend& backend)
 
     auto root = std::make_unique<Root>();
     m_root = root.get();
-    m_welcome = m_root->pages->addChild<WelcomePage>();
-    m_disk = m_root->pages->addChild<DiskPage>();
-    m_partition = m_root->pages->addChild<PartitionPage>(std::filesystem::exists("/sys/firmware/efi"));
-    m_partition->setWindow(&m_window);
-    m_account = m_root->pages->addChild<AccountPage>();
-    m_timeZone = m_root->pages->addChild<TimeZonePage>();
-    m_summary = m_root->pages->addChild<SummaryPage>();
-    m_progress = m_root->pages->addChild<ProgressPage>();
-    m_result = m_root->pages->addChild<ResultPage>();
+    m_language = m_root->pages->addChild<LanguagePage>();
+    buildPages();
     m_window.setContentView(std::move(root));
 
     m_root->primary->onClicked = [this] { primaryClicked(); };
     m_root->secondary->onClicked = [this] { secondaryClicked(); };
-    m_disk->onSelectionChanged = [this] { updateButtons(); };
-    m_partition->onChanged = [this] { updateButtons(); };
-    m_account->onChanged = [this] { updateButtons(); };
-    m_account->onAccepted = [this] { primaryClicked(); };
-    m_timeZone->onSelectionChanged = [this] { updateButtons(); };
+    m_root->back->onClicked = [this] { go(Step::Language); };
+    m_language->onSelectionChanged = [this] { languageChosen(); };
+    m_languageChanged = Application::instance()->languageChanged.connect([this] { retranslate(); });
 
     m_backend.onProgress = [this](const std::string& stage, double fraction) {
         m_progress->setProgress(stage, fraction);
@@ -141,10 +134,78 @@ InstallerWindow::InstallerWindow(Backend& backend)
     m_transition->setDuration(std::chrono::milliseconds(300));
     m_transition->setEasing(Animation::Easing::OutCubic);
 
-    showStep(Step::Welcome);
+    showStep(Step::Language);
 }
 
 InstallerWindow::~InstallerWindow() = default;
+
+void InstallerWindow::buildPages()
+{
+    View* pages = m_root->pages;
+    m_welcome = pages->addChild<WelcomePage>();
+    m_disk = pages->addChild<DiskPage>();
+    m_partition = pages->addChild<PartitionPage>(std::filesystem::exists("/sys/firmware/efi"));
+    m_partition->setWindow(&m_window);
+    m_account = pages->addChild<AccountPage>();
+    m_timeZone = pages->addChild<TimeZonePage>();
+    m_summary = pages->addChild<SummaryPage>();
+    m_progress = pages->addChild<ProgressPage>();
+    m_result = pages->addChild<ResultPage>();
+
+    m_disk->onSelectionChanged = [this] { updateButtons(); };
+    m_partition->onChanged = [this] { updateButtons(); };
+    m_account->onChanged = [this] { updateButtons(); };
+    m_account->onAccepted = [this] { primaryClicked(); };
+    m_timeZone->onSelectionChanged = [this] { updateButtons(); };
+}
+
+void InstallerWindow::retranslate()
+{
+    showStep(m_step);
+    m_window.setTitle(tr("Install Cutefish"));
+    m_language->retranslate();
+
+    std::vector<std::unique_ptr<View>> previous;
+    const DiskPage* disk = m_disk;
+    const PartitionPage* partition = m_partition;
+    const AccountPage* account = m_account;
+    const TimeZonePage* timeZone = m_timeZone;
+    const ProgressPage* progress = m_progress;
+    for (View* page : std::initializer_list<View*> {m_welcome, m_disk, m_partition, m_account, m_timeZone, m_summary,
+                                                    m_progress, m_result})
+        previous.push_back(m_root->pages->takeChild(page));
+    buildPages();
+
+    m_disk->takeStateFrom(*disk);
+    if (const DiskInfo* chosen = m_disk->selectedDisk(); chosen && isManual())
+        m_partition->setLoading(chosen->model.empty() ? chosen->path : chosen->model);
+    m_partition->takeStateFrom(*partition);
+    m_account->takeStateFrom(*account);
+    m_timeZone->takeStateFrom(*timeZone);
+    if (int(m_step) >= int(Step::Summary) && m_disk->selectedDisk() && m_timeZone->selectedZone())
+        fillSummary();
+    m_progress->takeStateFrom(*progress);
+    if (m_step == Step::Result) {
+        if (m_succeeded)
+            m_result->setSucceeded();
+        else
+            m_result->setFailed(m_error);
+    }
+    showStep(m_step);
+}
+
+void InstallerWindow::languageChosen()
+{
+    // cutefish-services switches the whole session, this program included,
+    // whose languageChanged then calls retranslate(); quietly, as nothing
+    // here needs a restart.
+    dbus::Connection* bus = Application::instance()->sessionBus();
+    const dbus::Proxy service(bus, "org.cutefish.Services", "/org/cutefish/Services/Language",
+                              "org.cutefish.Services.Language");
+    const std::vector<std::string> languages {m_language->selectedLanguage().code};
+    if (!bus || !service.send("setPreferredLanguagesQuietly", languages))
+        CF_WARNING(kLog) << "cutefish-installer: cannot ask the session to change the language";
+}
 
 void InstallerWindow::activate()
 {
@@ -155,6 +216,8 @@ void InstallerWindow::activate()
 Page* InstallerWindow::page(Step step) const
 {
     switch (step) {
+    case Step::Language:
+        return m_language;
     case Step::Welcome:
         return m_welcome;
     case Step::Disk:
@@ -172,7 +235,7 @@ Page* InstallerWindow::page(Step step) const
     case Step::Result:
         return m_result;
     }
-    return m_welcome;
+    return m_language;
 }
 
 void InstallerWindow::showStep(Step step)
@@ -235,15 +298,22 @@ void InstallerWindow::updateButtons()
 {
     DialogButton* primary = m_root->primary;
     DialogButton* secondary = m_root->secondary;
+    DialogButton* back = m_root->back;
     primary->setVisible(true);
     secondary->setVisible(true);
+    back->setVisible(false);
+    back->setText(tr("Back"));
     primary->setDestructive(false);
     primary->setEnabled(true);
     secondary->setText(tr("Back"));
     primary->setText(tr("Continue"));
 
     switch (m_step) {
+    case Step::Language:
+        secondary->setVisible(false);
+        break;
     case Step::Welcome:
+        back->setVisible(true);
         secondary->setText(tr("Try Cutefish"));
         primary->setText(tr("Next"));
         break;
@@ -268,6 +338,7 @@ void InstallerWindow::updateButtons()
         secondary->setVisible(false);
         break;
     case Step::Result:
+        // TRANSLATORS: After a successful installation: go on using the live system instead of restarting.
         secondary->setText(m_succeeded ? tr("Keep Trying") : tr("Close"));
         primary->setText(m_succeeded ? tr("Restart Now") : tr("Try Again"));
         break;
@@ -280,6 +351,9 @@ void InstallerWindow::primaryClicked()
     if (!m_root->primary->isEnabled() || !m_root->primary->isVisible())
         return;
     switch (m_step) {
+    case Step::Language:
+        go(Step::Welcome);
+        break;
     case Step::Welcome:
         go(Step::Disk);
         break;
@@ -292,14 +366,10 @@ void InstallerWindow::primaryClicked()
     case Step::Account:
         go(Step::TimeZone);
         break;
-    case Step::TimeZone: {
-        installer::Options options;
-        m_account->fill(options);
-        m_summary->setSummary(options, *m_disk->selectedDisk(), *m_timeZone->selectedZone(),
-                              isManual() ? &m_partition->plan() : nullptr);
+    case Step::TimeZone:
+        fillSummary();
         go(Step::Summary);
         break;
-    }
     case Step::Summary:
         install();
         break;
@@ -317,6 +387,8 @@ void InstallerWindow::primaryClicked()
 void InstallerWindow::secondaryClicked()
 {
     switch (m_step) {
+    case Step::Language:
+        break;
     case Step::Welcome:
     case Step::Result:
         Application::instance()->quit();
@@ -356,6 +428,14 @@ void InstallerWindow::loadDisks()
     });
 }
 
+void InstallerWindow::fillSummary()
+{
+    installer::Options options;
+    m_account->fill(options);
+    m_summary->setSummary(options, *m_disk->selectedDisk(), *m_timeZone->selectedZone(),
+                          isManual() ? &m_partition->plan() : nullptr);
+}
+
 bool InstallerWindow::isManual() const
 {
     return m_disk->isManual();
@@ -385,6 +465,7 @@ void InstallerWindow::install()
         options.partitioning = m_partition->plan().toMap();
     m_account->fill(options);
     options.timeZone = m_timeZone->selectedZone()->id;
+    options.language = m_language->selectedLanguage().locale;
 
     m_progress->setProgress(installer::kStagePrepare, 0);
     go(Step::Progress);
@@ -397,6 +478,7 @@ void InstallerWindow::install()
 void InstallerWindow::finished(bool success, const std::string& error)
 {
     m_succeeded = success;
+    m_error = error;
     if (success)
         m_result->setSucceeded();
     else

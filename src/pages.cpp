@@ -27,6 +27,7 @@ namespace strings = cutefish::base::strings;
 static constexpr double kDiskRowHeight = 56;
 static constexpr double kZoneRowHeight = 44;
 static constexpr int kZoneRowsShown = 4;
+static constexpr int kLanguageRowsShown = 5;
 static constexpr double kFieldHeight = 36;
 static constexpr double kFormRowHeight = 44;
 // From the card's edges to the captions and the typed text.
@@ -79,6 +80,63 @@ private:
     Icon* m_glyph;
 };
 
+LanguagePage::LanguagePage()
+{
+    setThemeIcon("preferences-desktop-locale");
+    retranslate();
+
+    m_selected = installerLanguageFor(sessionLanguage());
+    m_card = content()->addChild<Card>();
+    m_card->setClipsChildren(true);
+    m_card->setChildClipRadius(kCardRadius);
+    m_list = m_card->addChild<ListView>();
+    m_list->setRowHeight(kZoneRowHeight);
+    m_list->setMargins({0, kCardInset, 0, kCardInset});
+    m_list->createItem = [] { return std::make_unique<ChoiceRow>(); };
+    m_list->bindItem = [this](View* item, size_t row) {
+        auto* choice = static_cast<ChoiceRow*>(item);
+        choice->setTitle(installerLanguages()[row].name);
+        choice->setSelected(row == m_selected);
+        choice->onClicked = [this, row] {
+            if (row == m_selected)
+                return;
+            m_selected = row;
+            m_list->reload();
+            if (onSelectionChanged)
+                onSelectionChanged();
+        };
+    };
+    m_list->setRowCount(installerLanguages().size());
+}
+
+const InstallerLanguage& LanguagePage::selectedLanguage() const
+{
+    return installerLanguages()[m_selected];
+}
+
+void LanguagePage::retranslate()
+{
+    setTitle(tr("Choose Your Language"));
+    setSubtitle(tr("The installer and the installed system use this language."));
+}
+
+double LanguagePage::contentHeight() const
+{
+    return kLanguageRowsShown * kZoneRowHeight + 2 * kCardInset;
+}
+
+void LanguagePage::layoutContent()
+{
+    const RectF bounds = content()->localRect();
+    m_card->setGeometry(bounds);
+    m_list->setGeometry(m_card->localRect());
+    // The language spoken now may be further down than the rows shown.
+    if (!m_scrolled && bounds.height > 0) {
+        m_list->scrollToRow(m_selected);
+        m_scrolled = true;
+    }
+}
+
 WelcomePage::WelcomePage()
 {
     setIcon(std::make_unique<Picture>(dataPath("logo.svg")), 112, 52);
@@ -97,9 +155,8 @@ DiskPage::DiskPage()
     m_message->setTextAlignment(Label::TextAlignment::Center);
     m_message->setWrap(true);
     m_manual = content()->addChild<CheckBox>(tr("Partition manually"));
-    m_manual->onToggled = [this](bool manual) {
-        setSubtitle(manual ? tr("Choose the partitions on the next page.")
-                           : tr("Cutefish uses the whole disk. Everything on it will be erased."));
+    m_manual->onToggled = [this](bool) {
+        updateSubtitle();
         if (onSelectionChanged)
             onSelectionChanged();
     };
@@ -109,6 +166,20 @@ DiskPage::DiskPage()
 bool DiskPage::isManual() const
 {
     return m_manual->isChecked();
+}
+
+void DiskPage::updateSubtitle()
+{
+    setSubtitle(isManual() ? tr("Choose the partitions on the next page.")
+                           : tr("Cutefish uses the whole disk. Everything on it will be erased."));
+}
+
+void DiskPage::takeStateFrom(const DiskPage& other)
+{
+    m_manual->setChecked(other.isManual());
+    updateSubtitle();
+    if (!other.m_loading)
+        setDisks(other.m_disks, other.selectedDisk() ? other.selectedDisk()->path : std::string());
 }
 
 void DiskPage::setLoading()
@@ -138,6 +209,7 @@ void DiskPage::setDisks(std::vector<DiskInfo> disks, const std::string& preferre
         row->setTitle(disk.model.empty() ? disk.path : disk.model);
         std::string detail = disk.path;
         if (disk.size < installer::kMinimumRootSize)
+            // TRANSLATORS: Beside a disk; {size} is a size such as "12.0 GB".
             detail += " · " + format(tr("Too small, needs {size}"), {{"size", formatSize(installer::kMinimumRootSize)}});
         row->setDetail(detail);
         row->setNote(formatSize(disk.size));
@@ -266,6 +338,7 @@ AccountPage::Field AccountPage::addField(const std::string& caption)
     field.field->setFrameVisible(false);
     field.field->setTextMargins(0, 0);
     field.field->setFontSize(14);
+    // TRANSLATORS: In an empty field that must be filled in.
     field.field->setPlaceholder(tr("Required"));
     return field;
 }
@@ -307,6 +380,18 @@ void AccountPage::fill(installer::Options& options) const
 void AccountPage::focusFirstField()
 {
     m_fullName.field->setFocus();
+}
+
+void AccountPage::takeStateFrom(const AccountPage& other)
+{
+    m_fullName.field->setText(other.m_fullName.field->text());
+    m_userName.field->setText(other.m_userName.field->text());
+    m_hostName.field->setText(other.m_hostName.field->text());
+    m_password.field->setText(other.m_password.field->text());
+    m_confirm.field->setText(other.m_confirm.field->text());
+    m_userNameEdited = other.m_userNameEdited;
+    m_hostNameEdited = other.m_hostNameEdited;
+    changed();
 }
 
 void AccountPage::changed()
@@ -396,6 +481,14 @@ void TimeZonePage::scrollToSelection()
         m_list->scrollToRow(size_t(found - m_shown.begin()));
 }
 
+void TimeZonePage::takeStateFrom(const TimeZonePage& other)
+{
+    m_selected = other.m_selected;
+    m_search->setText(other.m_search->text());
+    filter();
+    m_list->setScrollPosition(other.m_list->scrollPosition());
+}
+
 void TimeZonePage::filter()
 {
     m_shown.clear();
@@ -442,6 +535,7 @@ void SummaryPage::setSummary(const installer::Options& options, const DiskInfo& 
 {
     const std::string diskName = disk.model.empty() ? disk.path : disk.model;
     const std::string diskText = diskName + " (" + formatSize(disk.size) + ")";
+    // TRANSLATORS: {disk} is a disk's name and size, such as "Samsung SSD (512.1 GB)".
     m_rows[0]->setValue(plan ? format(tr("Partitioned manually, {disk}"), {{"disk", diskText}}) : diskText);
     m_rows[1]->setValue(options.fullName);
     m_rows[2]->setValue(options.userName);
@@ -464,16 +558,22 @@ void SummaryPage::setSummary(const installer::Options& options, const DiskInfo& 
 
 double SummaryPage::contentHeight() const
 {
-    return double(m_rows.size()) * SummaryRow::kHeight + kMessageGap + m_warning->heightForWidth(kContentWidth);
+    double height = kMessageGap + m_warning->heightForWidth(kContentWidth);
+    for (const SummaryRow* row : m_rows)
+        height += row->heightForWidth(kContentWidth);
+    return height;
 }
 
 void SummaryPage::layoutContent()
 {
     const RectF bounds = content()->localRect();
-    const double cardHeight = double(m_rows.size()) * SummaryRow::kHeight;
+    double cardHeight = 0;
+    for (SummaryRow* row : m_rows) {
+        const double rowHeight = row->heightForWidth(bounds.width);
+        row->setGeometry({0, cardHeight, bounds.width, rowHeight});
+        cardHeight += rowHeight;
+    }
     m_card->setGeometry({0, 0, bounds.width, cardHeight});
-    for (size_t i = 0; i < m_rows.size(); ++i)
-        m_rows[i]->setGeometry({0, double(i) * SummaryRow::kHeight, bounds.width, SummaryRow::kHeight});
     m_warning->setColor(m_erases ? ColorRecipe(accent::red) : ColorRecipe(Theme::current().disabledText));
     m_warning->setGeometry({0, cardHeight + kMessageGap, bounds.width, m_warning->heightForWidth(bounds.width)});
 }
@@ -490,6 +590,8 @@ ProgressPage::ProgressPage()
 
 void ProgressPage::setProgress(const std::string& stage, double fraction)
 {
+    m_stage = stage;
+    m_fraction = fraction;
     std::string text = tr("Preparing the disk…");
     if (stage == installer::kStageCopy)
         text = tr("Copying the system…");
@@ -501,6 +603,11 @@ void ProgressPage::setProgress(const std::string& stage, double fraction)
         text = tr("Finishing…");
     setSubtitle(text);
     m_bar->setValue(std::clamp(fraction, 0.0, 1.0));
+}
+
+void ProgressPage::takeStateFrom(const ProgressPage& other)
+{
+    setProgress(other.m_stage, other.m_fraction);
 }
 
 double ProgressPage::contentHeight() const
@@ -544,7 +651,8 @@ void ResultPage::setFailed(const std::string& error)
 {
     setBadge("close", accent::red);
     setTitle(tr("The Installation Failed"));
-    setSubtitle(tr("Cutefish could not be installed. The details are in /var/log/cutefish-installer.log."));
+    setSubtitle(format(tr("Cutefish could not be installed. The details are in {path}."),
+                       {{"path", "/var/log/cutefish-installer.log"}}));
     m_error->setText(error);
     requestLayout();
 }

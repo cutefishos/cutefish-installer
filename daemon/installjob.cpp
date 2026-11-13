@@ -293,11 +293,14 @@ bool InstallJob::configure()
     if (error)
         return fail("Cannot set the time zone: " + error.message());
 
-    // The language and keyboard the live system was started with.
+    // The language and keyboard the live system was started with, then the
+    // language chosen.
     for (const char* path : {"/etc/default/locale", "/etc/locale.gen", "/etc/default/keyboard"}) {
         if (fs::exists(path))
             fs::copy_file(path, inTarget(path), fs::copy_options::overwrite_existing, error);
     }
+    if (!m_options.language.empty() && !writeLanguage(m_paths.target, m_options.language))
+        return fail("Cannot set the language to " + m_options.language + '.');
     if (fs::exists(inTarget("/usr/sbin/locale-gen")) && !chroot({"locale-gen"}))
         return false;
 
@@ -318,6 +321,18 @@ bool InstallJob::configure()
                 ::chmod(destination.c_str(), 0600);
         }
     }
+    return true;
+}
+
+bool InstallJob::writeLanguage(const std::string& root, const std::string& locale)
+{
+    const std::string defaultLocale = root + "/etc/default/locale";
+    const std::string localeGen = root + "/etc/locale.gen";
+    if (!file::writeAtomically(defaultLocale, plan::defaultLocale(file::read(defaultLocale).value_or(""), locale))
+        || !file::writeAtomically(localeGen, plan::localeGen(file::read(localeGen).value_or(""), locale)))
+        return false;
+    ::chmod(defaultLocale.c_str(), 0644);
+    ::chmod(localeGen.c_str(), 0644);
     return true;
 }
 

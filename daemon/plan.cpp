@@ -69,6 +69,43 @@ std::string hosts(const std::string& hostName)
            "ff02::2\t\tip6-allrouters\n";
 }
 
+std::string defaultLocale(std::string_view defaultLocaleFile, const std::string& locale)
+{
+    std::string text = "LANG=" + locale + '\n';
+    for (const std::string& line : strings::split(defaultLocaleFile, '\n')) {
+        // Each of these would put the messages in another language.
+        if (line.empty() || line.starts_with("LANG=") || line.starts_with("LANGUAGE=") || line.starts_with("LC_ALL=")
+            || line.starts_with("LC_MESSAGES="))
+            continue;
+        text += line + '\n';
+    }
+    return text;
+}
+
+std::string localeGen(std::string_view localeGenFile, const std::string& locale)
+{
+    const std::vector<std::string> entry {locale, "UTF-8"};
+    std::string_view body = localeGenFile;
+    if (body.ends_with('\n'))
+        body.remove_suffix(1);
+    std::string text;
+    bool enabled = false;
+    for (const std::string& line : body.empty() ? std::vector<std::string>() : strings::split(body, '\n')) {
+        std::string_view uncommented = line;
+        while (uncommented.starts_with('#'))
+            uncommented.remove_prefix(1);
+        if (!enabled && strings::splitWhitespace(uncommented) == entry) {
+            text += locale + " UTF-8\n";
+            enabled = true;
+            continue;
+        }
+        text += line + '\n';
+    }
+    if (!enabled)
+        text += locale + " UTF-8\n";
+    return text;
+}
+
 std::string accountsServiceUser(const std::string& icon)
 {
     return "[User]\n"

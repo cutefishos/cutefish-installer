@@ -5,6 +5,7 @@
 
 #include "backend.h"
 
+#include "base/signal.h"
 #include "common/installer.h"
 #include "ui/window.h"
 
@@ -15,6 +16,7 @@ class Animation;
 }
 
 class Page;
+class LanguagePage;
 class WelcomePage;
 class DiskPage;
 class PartitionPage;
@@ -24,12 +26,13 @@ class SummaryPage;
 class ProgressPage;
 class ResultPage;
 
-// The installer, full screen: a welcome that lets the system be tried
-// instead, the choices one page each, then the installation.
+// The installer, full screen: the language, a welcome that lets the system be
+// tried instead, the choices one page each, then the installation.
 class InstallerWindow
 {
 public:
     enum class Step {
+        Language,
         Welcome,
         Disk,
         Partition,
@@ -50,6 +53,7 @@ public:
     void showStep(Step step);
     Step step() const { return m_step; }
 
+    LanguagePage* languagePage() const { return m_language; }
     DiskPage* diskPage() const { return m_disk; }
     PartitionPage* partitionPage() const { return m_partition; }
     AccountPage* accountPage() const { return m_account; }
@@ -64,10 +68,17 @@ private:
     class Root;
 
     Page* page(Step step) const;
+    // Every page but the language's, whose choice lasts.
+    void buildPages();
+    // The pages made again in the language now spoken, with what was chosen
+    // and typed on them.
+    void retranslate();
     void go(Step step);
     void updateButtons();
     void primaryClicked();
     void secondaryClicked();
+    void languageChosen();
+    void fillSummary();
     void loadDisks();
     void loadLayout();
     bool isManual() const;
@@ -78,6 +89,7 @@ private:
     Backend& m_backend;
     cutefish::ui::Window m_window;
     Root* m_root = nullptr;
+    LanguagePage* m_language = nullptr;
     WelcomePage* m_welcome = nullptr;
     DiskPage* m_disk = nullptr;
     PartitionPage* m_partition = nullptr;
@@ -86,8 +98,10 @@ private:
     SummaryPage* m_summary = nullptr;
     ProgressPage* m_progress = nullptr;
     ResultPage* m_result = nullptr;
-    Step m_step = Step::Welcome;
+    Step m_step = Step::Language;
     std::unique_ptr<cutefish::ui::Animation> m_transition;
     Page* m_leaving = nullptr;
     bool m_succeeded = false;
+    std::string m_error;
+    cutefish::base::Subscription m_languageChanged;
 };

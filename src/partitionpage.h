@@ -24,6 +24,15 @@ class Window;
 
 class PartitionBar;
 
+// Where the table's columns start, and the format column's width.
+struct PartitionColumns
+{
+    double fileSystem = 0;
+    double use = 0;
+    double format = 0;
+    double formatWidth = 0;
+};
+
 // The disk's partitions as they will be, edited by hand: a new partition
 // table, partitions added in free space or deleted, and what each is used for.
 class PartitionPage : public Page
@@ -44,10 +53,17 @@ public:
     void setLoading(const std::string& diskName);
     void setLayout(installer::DiskLayout layout, std::vector<std::string> fileSystems);
     void setError(const std::string& error);
+    // The plan of a page made in another language; this one already loading
+    // the same disk.
+    void takeStateFrom(const PartitionPage& other);
 
     const installer::PartitionPlan& plan() const { return m_plan; }
     // As if edited into this, for tests.
     void setPlanForCapture(installer::PartitionPlan plan);
+    // For tests: the dialog Add…, Edit… or New Partition Table opens, open.
+    cutefish::ui::Window* openAddDialogForCapture();
+    cutefish::ui::Window* openEditDialogForCapture();
+    cutefish::ui::Window* openNewTableDialogForCapture();
     bool isComplete() const;
 
     // The dialogs open over this window.
@@ -75,6 +91,7 @@ private:
     void deletePartition();
 
     bool m_uefi;
+    PartitionColumns m_columns;
     installer::PartitionPlan m_plan;
     std::vector<std::string> m_fileSystems;
     std::vector<Entry> m_entries;

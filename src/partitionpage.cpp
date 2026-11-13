@@ -38,10 +38,13 @@ static constexpr double kRowPadding = 16;
 static constexpr double kFileSystemColumn = 210;
 static constexpr double kUseColumn = 390;
 static constexpr double kFormatColumn = 540;
+static constexpr double kFormatWidth = 80;
+static constexpr double kFileSystemWidth = 120;
 static constexpr double kDialogWidth = 420;
 static constexpr double kFieldHeight = 32;
 static constexpr double kDialogRow = 44;
 static constexpr double kCaptionWidth = 120;
+static constexpr double kCaptionGap = 12;
 static constexpr uint64_t kGB = 1'000'000'000;
 
 static Color colorOf(const installer::PlannedPartition* partition)
@@ -71,16 +74,49 @@ static std::string sizeText(uint64_t bytes)
 std::string mountPointName(const std::string& mountPoint)
 {
     if (mountPoint.empty())
+        // TRANSLATORS: What a partition is used for: nothing.
         return tr("Not used");
     if (mountPoint == "/")
-        return tr("/ (system)");
+        // TRANSLATORS: What a partition is used for; {mount} is "/".
+        return format(tr("{mount} (system)"), {{"mount", mountPoint}});
     if (mountPoint == "/boot/efi")
-        return tr("/boot/efi (EFI system)");
+        // TRANSLATORS: What a partition is used for; {mount} is "/boot/efi".
+        return format(tr("{mount} (EFI system)"), {{"mount", mountPoint}});
     if (mountPoint == installer::kMountSwap)
+        // TRANSLATORS: What a partition is used for: swap space.
         return tr("Swap");
     if (mountPoint == installer::kMountBiosBoot)
+        // TRANSLATORS: What a partition is used for: the boot loader on a computer without UEFI.
         return tr("BIOS boot");
     return mountPoint;
+}
+
+// The columns as laid out for English, the use and format columns moved left
+// as far as their longest text needs.
+static PartitionColumns partitionColumns()
+{
+    Label label;
+    label.setFontSize(13);
+    const auto widest = [&label](const std::vector<std::string>& texts) {
+        double width = 0;
+        for (const std::string& text : texts) {
+            label.setText(text);
+            // One more for the hinting at the window's scale.
+            width = std::max(width, std::ceil(label.sizeHint().width) + 1);
+        }
+        return width;
+    };
+    std::vector<std::string> uses {"—"};
+    for (const std::string& mountPoint : installer::mountPoints())
+        uses.push_back(mountPointName(mountPoint));
+
+    PartitionColumns columns;
+    columns.formatWidth = std::max(kFormatWidth, widest({tr("Format")}));
+    columns.format = kFormatColumn - (columns.formatWidth - kFormatWidth);
+    columns.use = columns.format - 8 - std::max(kFormatColumn - kUseColumn - 8, widest(uses));
+    // The file systems keep room for a type and a short label.
+    columns.fileSystem = std::min(kFileSystemColumn, columns.use - 8 - kFileSystemWidth);
+    return columns;
 }
 
 // The disk drawn to scale, a segment for each partition and free space.
@@ -151,7 +187,8 @@ private:
 class PartitionRow : public View
 {
 public:
-    PartitionRow()
+    explicit PartitionRow(const PartitionColumns& columns)
+        : m_columns(columns)
     {
         m_device = addLabel(this, {}, 13, 500);
         m_device->setElide(Label::Elide::Right);
@@ -182,6 +219,7 @@ public:
                 fileSystem += (fileSystem.empty() ? "" : " · ") + partition->label;
             m_fileSystem->setText(fileSystem.empty() ? std::string("—") : fileSystem);
             m_use->setText(partition->mountPoint.empty() ? std::string("—") : mountPointName(partition->mountPoint));
+            // TRANSLATORS: Marks a partition that exists and will be formatted.
             m_format->setText(partition->format && !partition->isNew() ? tr("Format") : std::string());
         }
         requestLayout();
@@ -198,17 +236,20 @@ protected:
         const Theme& theme = Theme::current();
         const double width = geometry().width;
         const double height = geometry().height;
-        const double textHeight = m_device->sizeHint().height;
-        const double top = rounding::centeredStart(height, textHeight);
         const double left = kRowPadding + 10 + 10;
-        m_device->setGeometry({left, top, kFileSystemColumn - left - 8, textHeight});
+        // Each at its own height: text in another script has taller lines.
+        const auto place = [height](Label* label, double x, double labelWidth) {
+            const double textHeight = label->sizeHint().height;
+            label->setGeometry({x, rounding::centeredStart(height, textHeight), labelWidth, textHeight});
+        };
+        place(m_device, left, m_columns.fileSystem - left - 8);
         m_fileSystem->setColor(theme.disabledText);
-        m_fileSystem->setGeometry({kFileSystemColumn, top, kUseColumn - kFileSystemColumn - 8, textHeight});
-        m_use->setGeometry({kUseColumn, top, kFormatColumn - kUseColumn - 8, textHeight});
+        place(m_fileSystem, m_columns.fileSystem, m_columns.use - m_columns.fileSystem - 8);
+        place(m_use, m_columns.use, m_columns.format - m_columns.use - 8);
         m_format->setColor(accent::red);
-        m_format->setGeometry({kFormatColumn, top, 80, textHeight});
+        place(m_format, m_columns.format, m_columns.formatWidth);
         m_size->setColor(theme.disabledText);
-        m_size->setGeometry({width - kRowPadding - 100, top, 100, textHeight});
+        place(m_size, width - kRowPadding - 100, 100);
     }
 
     void paint(Painter& painter) override
@@ -239,6 +280,7 @@ private:
     Label* m_use;
     Label* m_format;
     Label* m_size;
+    PartitionColumns m_columns;
     Color m_color;
     bool m_selected = false;
 };
@@ -337,24 +379,28 @@ protected:
     {
         const double width = geometry().width;
         const Theme& theme = Theme::current();
+        // As English has it, wider for longer captions.
+        double captionWidth = kCaptionWidth;
+        for (const Label* caption : {m_sizeCaption, m_useCaption, m_fileSystemCaption})
+            captionWidth = std::max(captionWidth, std::ceil(caption->sizeHint().width) + kCaptionGap);
         double y = 0;
         const auto row = [&](Label* caption, View* field, double fieldWidth) {
             const double captionHeight = caption->sizeHint().height;
             caption->setColor(theme.disabledText);
-            caption->setGeometry({0, y + rounding::centeredStart(kDialogRow, captionHeight), kCaptionWidth, captionHeight});
-            field->setGeometry({kCaptionWidth, y + rounding::centeredStart(kDialogRow, kFieldHeight), fieldWidth, kFieldHeight});
+            caption->setGeometry({0, y + rounding::centeredStart(kDialogRow, captionHeight), captionWidth, captionHeight});
+            field->setGeometry({captionWidth, y + rounding::centeredStart(kDialogRow, kFieldHeight), fieldWidth, kFieldHeight});
             y += kDialogRow;
         };
         if (m_mode == Mode::Add) {
-            row(m_sizeCaption, m_size, width - kCaptionWidth - 40);
+            row(m_sizeCaption, m_size, width - captionWidth - 40);
             const double unitHeight = m_unit->sizeHint().height;
             m_unit->setGeometry({width - 32, y - kDialogRow + rounding::centeredStart(kDialogRow, unitHeight), 32, unitHeight});
         }
-        row(m_useCaption, m_use, width - kCaptionWidth);
-        row(m_fileSystemCaption, m_fileSystem, width - kCaptionWidth);
+        row(m_useCaption, m_use, width - captionWidth);
+        row(m_fileSystemCaption, m_fileSystem, width - captionWidth);
         if (m_mode == Mode::EditExisting) {
             const double height = m_format->sizeHint().height;
-            m_format->setGeometry({kCaptionWidth, y + rounding::centeredStart(kDialogRow, height), width - kCaptionWidth, height});
+            m_format->setGeometry({captionWidth, y + rounding::centeredStart(kDialogRow, height), width - captionWidth, height});
             y += kDialogRow;
         }
         y += kGap;
@@ -444,7 +490,8 @@ PartitionPage::PartitionPage(bool uefi)
     m_list = m_card->addChild<ListView>();
     m_list->setRowHeight(kRowHeight);
     m_list->setMargins({0, kCardInset, 0, kCardInset});
-    m_list->createItem = [] { return std::make_unique<PartitionRow>(); };
+    m_columns = partitionColumns();
+    m_list->createItem = [this] { return std::make_unique<PartitionRow>(m_columns); };
     m_list->bindItem = [this](View* item, size_t row) {
         auto* partitionRow = static_cast<PartitionRow*>(item);
         const Entry& entry = m_entries[row];
@@ -464,6 +511,7 @@ PartitionPage::PartitionPage(bool uefi)
     m_edit->onClicked = [this] { editPartition(); };
     m_delete->onClicked = [this] { deletePartition(); };
 
+    // TRANSLATORS: "Partition" is the header of the column of partition names.
     for (const char* text : {tr("Partition"), tr("File system"), tr("Use as"), tr("Size")})
         m_headers.push_back(addLabel(content(), text, 12));
     m_headers.back()->setTextAlignment(Label::TextAlignment::Right);
@@ -497,11 +545,40 @@ void PartitionPage::setLayout(installer::DiskLayout layout, std::vector<std::str
     changed();
 }
 
+void PartitionPage::takeStateFrom(const PartitionPage& other)
+{
+    if (other.m_loading)
+        return;
+    m_loading = false;
+    m_fileSystems = other.m_fileSystems;
+    m_plan = other.m_plan;
+    m_selected = other.m_selected;
+    changed();
+}
+
 void PartitionPage::setPlanForCapture(installer::PartitionPlan plan)
 {
     m_loading = false;
     m_plan = std::move(plan);
     changed();
+}
+
+cutefish::ui::Window* PartitionPage::openAddDialogForCapture()
+{
+    addPartition();
+    return m_dialog->window();
+}
+
+cutefish::ui::Window* PartitionPage::openEditDialogForCapture()
+{
+    editPartition();
+    return m_dialog->window();
+}
+
+cutefish::ui::Window* PartitionPage::openNewTableDialogForCapture()
+{
+    newTable();
+    return m_confirm->window();
 }
 
 void PartitionPage::setError(const std::string& error)
@@ -654,12 +731,14 @@ void PartitionPage::layoutContent()
     m_bar->setGeometry({0, y, width, kBarHeight});
     m_bar->setVisible(!m_loading);
     y += kBarHeight + kGap;
-    const double headerHeight = m_headers.front()->sizeHint().height;
-    const double headerTop = y + kHeaderHeight - 4 - headerHeight;
-    const double columns[] = {kRowPadding + 20, kFileSystemColumn, kUseColumn};
-    for (size_t i = 0; i < 3; ++i)
-        m_headers[i]->setGeometry({columns[i], headerTop, 150, headerHeight});
-    m_headers[3]->setGeometry({width - kRowPadding - 100, headerTop, 100, headerHeight});
+    const double sizeColumn = width - kRowPadding - 100;
+    const double columns[] = {kRowPadding + 20, m_columns.fileSystem, m_columns.use, sizeColumn};
+    const double columnWidths[] = {m_columns.fileSystem - columns[0] - 8, m_columns.use - m_columns.fileSystem - 8,
+                                   sizeColumn - m_columns.use - 8, 100};
+    for (size_t i = 0; i < 4; ++i) {
+        const double headerHeight = m_headers[i]->sizeHint().height;
+        m_headers[i]->setGeometry({columns[i], y + kHeaderHeight - 4 - headerHeight, columnWidths[i], headerHeight});
+    }
     for (Label* header : m_headers) {
         header->setColor(Theme::current().disabledText);
         header->setVisible(!m_loading);

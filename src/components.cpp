@@ -19,6 +19,8 @@ static constexpr double kTitleGap = 8;
 static constexpr double kContentGap = 28;
 // The least space above a page's icon.
 static constexpr double kTopMargin = 32;
+// The column of titles and subtitles too long for kContentWidth.
+static constexpr double kWideColumnWidth = 720;
 // Around the rows' text, from the card's edges.
 static constexpr double kRowPadding = 16;
 
@@ -222,7 +224,7 @@ SummaryRow::SummaryRow(std::string text, std::string value)
 {
     m_text = addLabel(this, std::move(text), 14);
     m_value = addLabel(this, std::move(value), 14);
-    m_value->setElide(Label::Elide::Right);
+    m_value->setWrap(true);
     m_value->setTextAlignment(Label::TextAlignment::Right);
 }
 
@@ -237,17 +239,28 @@ void SummaryRow::setSeparatorVisible(bool visible)
     requestPaint();
 }
 
+double SummaryRow::valueLeft() const
+{
+    return kRowPadding + m_text->sizeHint().width + 24;
+}
+
+double SummaryRow::heightForWidth(double width) const
+{
+    const double valueWidth = std::max(0.0, width - kRowPadding - valueLeft());
+    return kHeight - m_value->sizeHint().height + m_value->heightForWidth(valueWidth);
+}
+
 void SummaryRow::layout()
 {
     const double width = geometry().width;
-    const double height = geometry().height;
     const SizeF text = m_text->sizeHint();
-    m_text->setGeometry({kRowPadding, rounding::centeredStart(height, text.height), text.width, text.height});
-    const double valueLeft = kRowPadding + text.width + 24;
-    const double valueHeight = m_value->sizeHint().height;
+    // Further lines of the value go below the first, which stays where a
+    // row of one line has it.
+    m_text->setGeometry({kRowPadding, rounding::centeredStart(kHeight, text.height), text.width, text.height});
+    const double valueWidth = std::max(0.0, width - kRowPadding - valueLeft());
     m_value->setColor(Theme::current().disabledText);
-    m_value->setGeometry({valueLeft, rounding::centeredStart(height, valueHeight),
-                          std::max(0.0, width - kRowPadding - valueLeft), valueHeight});
+    m_value->setGeometry({valueLeft(), rounding::centeredStart(kHeight, m_value->sizeHint().height), valueWidth,
+                          m_value->heightForWidth(valueWidth)});
 }
 
 void SummaryRow::paint(Painter& painter)
@@ -303,23 +316,41 @@ void Page::layout()
 {
     const double width = geometry().width;
     const double height = std::max(0.0, geometry().height - kFooterHeight);
-    const double columnWidth = std::min(kContentWidth, std::max(0.0, width - 32));
-    const double left = rounding::centeredStart(width, columnWidth);
     const double contentWidth = std::min(this->contentWidth(), std::max(0.0, width - 32));
-
-    const double titleHeight = m_title->heightForWidth(columnWidth);
-    const double subtitleHeight = m_subtitle->isVisible() ? m_subtitle->heightForWidth(columnWidth) : 0;
     const double contentHeight = this->contentHeight();
-    double block = titleHeight;
-    if (m_icon)
-        block += m_iconHeight + kIconGap;
-    if (subtitleHeight > 0)
-        block += kTitleGap + subtitleHeight;
-    if (contentHeight > 0)
-        block += kContentGap + contentHeight;
+    double columnWidth = 0;
+    double titleHeight = 0;
+    double subtitleHeight = 0;
+    double block = 0;
+    bool showsIcon = m_icon != nullptr;
+    const auto measure = [&](double column) {
+        columnWidth = std::min(column, std::max(0.0, width - 32));
+        titleHeight = m_title->heightForWidth(columnWidth);
+        subtitleHeight = m_subtitle->isVisible() ? m_subtitle->heightForWidth(columnWidth) : 0;
+        block = titleHeight;
+        if (showsIcon)
+            block += m_iconHeight + kIconGap;
+        if (subtitleHeight > 0)
+            block += kTitleGap + subtitleHeight;
+        if (contentHeight > 0)
+            block += kContentGap + contentHeight;
+    };
+    measure(kContentWidth);
+    // Longer text, as another language has it, takes fewer lines across
+    // more of the panel rather than reaching the buttons.
+    if (block > height - kTopMargin)
+        measure(kWideColumnWidth);
+    // Then without the icon, as for a summary of long values.
+    if (block > height - kTopMargin && showsIcon) {
+        showsIcon = false;
+        measure(kWideColumnWidth);
+    }
+    const double left = rounding::centeredStart(width, columnWidth);
 
     double y = std::max(kTopMargin, rounding::centeredStart(height, block));
-    if (m_icon) {
+    if (m_icon)
+        m_icon->setVisible(showsIcon);
+    if (showsIcon) {
         m_icon->setGeometry({rounding::centeredStart(width, m_iconWidth), y, m_iconWidth, m_iconHeight});
         y += m_iconHeight + kIconGap;
     }

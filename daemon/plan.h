@@ -38,6 +38,13 @@ std::string hosts(const std::string& hostName);
 // The groups of `wanted` that the group file lists, in order.
 std::vector<std::string> existingGroups(std::string_view groupFile, const std::vector<std::string>& wanted);
 
+// /etc/default/locale with the system's language set to the locale, such as
+// "de_DE.UTF-8"; the variables of other categories stay.
+std::string defaultLocale(std::string_view defaultLocaleFile, const std::string& locale);
+// /etc/locale.gen with the locale's line in UTF-8 enabled, added when it is
+// missing.
+std::string localeGen(std::string_view localeGenFile, const std::string& locale);
+
 // AccountsService's file for an account whose picture is the icon.
 std::string accountsServiceUser(const std::string& icon);
 

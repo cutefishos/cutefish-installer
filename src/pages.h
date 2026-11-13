@@ -5,6 +5,7 @@
 
 #include "backend.h"
 #include "components.h"
+#include "languages.h"
 #include "timezones.h"
 
 #include "common/installer.h"
@@ -22,6 +23,30 @@ class ProgressBar;
 class SearchField;
 class TextField;
 }
+
+// The languages, each in its own name; the one chosen is spoken from then on.
+class LanguagePage : public Page
+{
+public:
+    LanguagePage();
+
+    const InstallerLanguage& selectedLanguage() const;
+    // Its own text again, in the language now spoken.
+    void retranslate();
+
+    std::function<void()> onSelectionChanged;
+
+    double contentHeight() const override;
+
+protected:
+    void layoutContent() override;
+
+private:
+    Card* m_card;
+    cutefish::ui::ListView* m_list;
+    size_t m_selected = 0;
+    bool m_scrolled = false;
+};
 
 class WelcomePage : public Page
 {
@@ -43,6 +68,8 @@ public:
     const DiskInfo* selectedDisk() const;
     // The partitions are chosen by hand instead of erasing the disk.
     bool isManual() const;
+    // The disks and choices of a page made in another language.
+    void takeStateFrom(const DiskPage& other);
 
     std::function<void()> onSelectionChanged;
 
@@ -53,6 +80,7 @@ protected:
 
 private:
     void select(int index);
+    void updateSubtitle();
     double cardHeight() const;
 
     Card* m_card;
@@ -75,6 +103,7 @@ public:
     bool isComplete() const;
     void fill(installer::Options& options) const;
     void focusFirstField();
+    void takeStateFrom(const AccountPage& other);
 
     std::function<void()> onChanged;
     // Enter in the last field.
@@ -115,6 +144,7 @@ public:
     // Empty while none is chosen.
     const TimeZone* selectedZone() const;
     void scrollToSelection();
+    void takeStateFrom(const TimeZonePage& other);
 
     std::function<void()> onSelectionChanged;
 
@@ -164,6 +194,7 @@ public:
     ProgressPage();
 
     void setProgress(const std::string& stage, double fraction);
+    void takeStateFrom(const ProgressPage& other);
 
     double contentHeight() const override;
 
@@ -173,6 +204,8 @@ protected:
 private:
     cutefish::ui::ProgressBar* m_bar;
     cutefish::ui::Label* m_hint;
+    std::string m_stage;
+    double m_fraction = 0;
 };
 
 class ResultPage : public Page

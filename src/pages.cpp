@@ -72,6 +72,7 @@ static ListView* addChoiceList(Card* card, double rowHeight)
     card->setClipsChildren(true);
     card->setChildClipRadius(kCardRadius);
     ListView* list = card->addChild<ListView>();
+    list->setCornerRadius(kCardRadius);
     list->setRowHeight(rowHeight);
     list->createItem = [card] {
         auto row = std::make_unique<ChoiceRow>();

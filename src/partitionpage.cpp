@@ -489,6 +489,7 @@ PartitionPage::PartitionPage(bool uefi)
     m_card->setClipsChildren(true);
     m_card->setChildClipRadius(kCardRadius);
     m_list = m_card->addChild<ListView>();
+    m_list->setCornerRadius(kCardRadius);
     m_list->setRowHeight(kRowHeight);
     m_list->setMargins({0, kCardInset, 0, kCardInset});
     m_columns = partitionColumns();

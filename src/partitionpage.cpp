@@ -33,11 +33,11 @@ static constexpr double kHeaderHeight = 18;
 static constexpr double kGap = 12;
 static constexpr double kActionHeight = 30;
 // From the card's edge to the columns.
-static constexpr double kRowPadding = 16;
+static constexpr double kRowPadding = kCardPadding;
 // Where each column starts in a row, after the colour swatch.
-static constexpr double kFileSystemColumn = 210;
-static constexpr double kUseColumn = 390;
-static constexpr double kFormatColumn = 540;
+static constexpr double kFileSystemColumn = 214;
+static constexpr double kUseColumn = 394;
+static constexpr double kFormatColumn = 544;
 static constexpr double kFormatWidth = 80;
 static constexpr double kFileSystemWidth = 120;
 static constexpr double kDialogWidth = 420;
@@ -258,9 +258,10 @@ protected:
         const RectF background = localRect().adjusted(kCardInset, 0, -kCardInset, 0);
         const double radius = kCardRadius - kCardInset;
         if (m_selected)
-            painter.fillRoundedRect(background, radius, theme.highlight.withAlpha(theme.darkMode ? 0.24 : 0.12));
+            painter.fillRoundedRect(background, radius, theme.highlight.withAlpha(theme.darkMode ? 0.24 : 0.12),
+                                    themeCorners());
         else if (isHovered())
-            painter.fillRoundedRect(background, radius, theme.text.withAlpha(0.04));
+            painter.fillRoundedRect(background, radius, theme.text.withAlpha(0.04), themeCorners());
         const double swatch = 10;
         painter.fillRoundedRect({kRowPadding, rounding::centeredStart(geometry().height, swatch), swatch, swatch}, 3,
                                 m_color);

@@ -11,9 +11,8 @@
 #include "base/logging.h"
 #include "ui/animation.h"
 #include "ui/application.h"
-#include "ui/cell_layout.h"
+#include "ui/color_provider.h"
 #include "ui/dialog_window.h"
-#include "ui/image_view.h"
 
 #include <algorithm>
 #include <chrono>
@@ -25,14 +24,8 @@ namespace dbus = cutefish::base::dbus;
 
 static const cutefish::base::LogCategory kLog("cutefish.installer");
 
-static constexpr double kButtonHeight = 36;
-static constexpr double kButtonMinimumWidth = 128;
+static constexpr double kButtonMinimumWidth = 112;
 static constexpr double kButtonSpacing = 12;
-// From the bottom of the panel to the buttons.
-static constexpr double kButtonBottom = 32;
-// The least space around the panel on a small screen.
-static constexpr double kPanelMargin = 24;
-static constexpr char kWallpaper[] = "/usr/share/backgrounds/cutefishos/default.jpg";
 // How far a page slides in or out.
 static constexpr double kSlide = 40;
 
@@ -41,71 +34,64 @@ class InstallerWindow::Root : public View
 public:
     Root()
     {
-        wallpaper = addChild<ImageView>(kWallpaper);
-        wallpaper->setFillMode(ImageView::FillMode::PreserveAspectCrop);
-        shadow = addChild<PanelShadow>();
-        panel = addChild<Panel>();
-        pages = panel->addChild<View>();
-        back = panel->addChild<DialogButton>();
-        secondary = panel->addChild<DialogButton>();
-        primary = panel->addChild<DialogButton>(std::string(), true);
+        pages = addChild<View>();
+        other = addChild<DialogButton>();
+        back = addChild<DialogButton>();
+        primary = addChild<DialogButton>(std::string(), true);
     }
 
-    ImageView* wallpaper;
-    PanelShadow* shadow;
-    Panel* panel;
     View* pages;
+    // The way on at the right, the way back beside it, and at the left
+    // the other way a page offers.
+    DialogButton* other;
     DialogButton* back;
-    DialogButton* secondary;
     DialogButton* primary;
 
+    bool acceptsPointer() const override { return true; }
+
 protected:
+    // The empty parts of the window move it.
+    void pointerPress(const PointerEvent& event) override
+    {
+        if (event.button == MouseButton::Left && window())
+            window()->startMove();
+    }
+
     void layout() override
     {
-        const RectF bounds = localRect();
-        wallpaper->setGeometry(bounds);
-        const double panelWidth = std::min(kPanelWidth, std::max(0.0, bounds.width - 2 * kPanelMargin));
-        const double panelHeight = std::min(kPanelHeight, std::max(0.0, bounds.height - 2 * kPanelMargin));
-        const RectF panelRect {rounding::centeredStart(bounds.width, panelWidth),
-                               rounding::centeredStart(bounds.height, panelHeight), panelWidth, panelHeight};
-        panel->setGeometry(panelRect);
-        const double reach = PanelShadow::kReach;
-        shadow->setGeometry(panelRect.adjusted(-reach, -reach, reach, reach));
-
-        const RectF inside = panel->localRect();
+        const RectF inside = localRect();
         pages->setGeometry(inside);
         for (const auto& page : pages->children())
             page->setGeometry(pages->localRect());
 
-        std::vector<DialogButton*> shown;
-        for (DialogButton* button : {back, secondary, primary}) {
-            if (button->isVisible())
-                shown.push_back(button);
+        const auto widthOf = [](const DialogButton* button) {
+            return std::max(kButtonMinimumWidth, button->sizeHint().width);
+        };
+        const double y = inside.height - kWindowMargin - kButtonHeight;
+        double right = inside.width - kWindowMargin;
+        for (DialogButton* button : {primary, back}) {
+            if (!button->isVisible())
+                continue;
+            const double width = widthOf(button);
+            button->setGeometry({right - width, y, width, kButtonHeight});
+            right -= width + kButtonSpacing;
         }
-        double total = 0;
-        std::vector<double> widths;
-        for (DialogButton* button : shown) {
-            widths.push_back(std::max(kButtonMinimumWidth, button->sizeHint().width));
-            total += widths.back();
-        }
-        if (shown.size() > 1)
-            total += kButtonSpacing * double(shown.size() - 1);
-        double x = rounding::centeredStart(inside.width, total);
-        const double y = inside.height - kButtonBottom - kButtonHeight;
-        for (size_t i = 0; i < shown.size(); ++i) {
-            shown[i]->setGeometry({x, y, widths[i], kButtonHeight});
-            x += widths[i] + kButtonSpacing;
-        }
+        other->setGeometry({kWindowMargin, y, widthOf(other), kButtonHeight});
     }
 };
 
 InstallerWindow::InstallerWindow(Backend& backend)
     : m_backend(backend)
 {
+    // A window of fixed size over the live desktop, above the windows of
+    // the system being tried; the compositor opens it centred.
     m_window.setTitle(tr("Install Cutefish"));
-    m_window.setMinimumSize({800, 600});
-    m_window.resize({1024, 768});
-    m_window.setFullScreen(true);
+    m_window.setBackgroundColor(ColorId::SecondBackground);
+    m_window.setMinimumSize({kWindowWidth, kWindowHeight});
+    m_window.setMaximumSize({kWindowWidth, kWindowHeight});
+    m_window.resize({kWindowWidth, kWindowHeight});
+    m_window.setUserResizable(false);
+    m_window.setAlwaysOnTop(true);
 
     auto root = std::make_unique<Root>();
     m_root = root.get();
@@ -114,8 +100,8 @@ InstallerWindow::InstallerWindow(Backend& backend)
     m_window.setContentView(std::move(root));
 
     m_root->primary->onClicked = [this] { primaryClicked(); };
-    m_root->secondary->onClicked = [this] { secondaryClicked(); };
-    m_root->back->onClicked = [this] { go(Step::Language); };
+    m_root->back->onClicked = [this] { backClicked(); };
+    m_root->other->onClicked = [this] { otherClicked(); };
     m_language->onSelectionChanged = [this] { languageChosen(); };
     m_languageChanged = Application::instance()->languageChanged.connect([this] { retranslate(); });
 
@@ -177,7 +163,7 @@ void InstallerWindow::retranslate()
     buildPages();
 
     m_disk->takeStateFrom(*disk);
-    if (const DiskInfo* chosen = m_disk->selectedDisk(); chosen && isManual())
+    if (const DiskInfo* chosen = m_disk->selectedDisk(); chosen && m_manual)
         m_partition->setLoading(chosen->model.empty() ? chosen->path : chosen->model);
     m_partition->takeStateFrom(*partition);
     m_account->takeStateFrom(*account);
@@ -297,27 +283,30 @@ void InstallerWindow::go(Step step)
 void InstallerWindow::updateButtons()
 {
     DialogButton* primary = m_root->primary;
-    DialogButton* secondary = m_root->secondary;
     DialogButton* back = m_root->back;
+    DialogButton* other = m_root->other;
     primary->setVisible(true);
-    secondary->setVisible(true);
-    back->setVisible(false);
-    back->setText(tr("Back"));
+    primary->setText(tr("Continue"));
     primary->setDestructive(false);
     primary->setEnabled(true);
-    secondary->setText(tr("Back"));
-    primary->setText(tr("Continue"));
+    back->setVisible(true);
+    back->setText(tr("Back"));
+    other->setVisible(false);
+    other->setEnabled(true);
 
     switch (m_step) {
     case Step::Language:
-        secondary->setVisible(false);
+        back->setVisible(false);
         break;
     case Step::Welcome:
-        back->setVisible(true);
-        secondary->setText(tr("Try Cutefish"));
-        primary->setText(tr("Next"));
+        other->setVisible(true);
+        other->setText(tr("Try Cutefish"));
         break;
     case Step::Disk:
+        other->setVisible(true);
+        // TRANSLATORS: A button: choose the partitions by hand instead of erasing the disk.
+        other->setText(tr("Partition Manually"));
+        other->setEnabled(m_disk->selectedDisk());
         primary->setEnabled(m_disk->selectedDisk());
         break;
     case Step::Partition:
@@ -330,16 +319,18 @@ void InstallerWindow::updateButtons()
         primary->setEnabled(m_timeZone->selectedZone());
         break;
     case Step::Summary:
-        primary->setText(isManual() ? tr("Install") : tr("Erase Disk and Install"));
+        primary->setText(m_manual ? tr("Install") : tr("Erase Disk and Install"));
         primary->setDestructive(m_summary->erases());
         break;
     case Step::Progress:
         primary->setVisible(false);
-        secondary->setVisible(false);
+        back->setVisible(false);
         break;
     case Step::Result:
+        back->setVisible(false);
+        other->setVisible(true);
         // TRANSLATORS: After a successful installation: go on using the live system instead of restarting.
-        secondary->setText(m_succeeded ? tr("Keep Trying") : tr("Close"));
+        other->setText(m_succeeded ? tr("Keep Trying") : tr("Close"));
         primary->setText(m_succeeded ? tr("Restart Now") : tr("Try Again"));
         break;
     }
@@ -358,7 +349,8 @@ void InstallerWindow::primaryClicked()
         go(Step::Disk);
         break;
     case Step::Disk:
-        go(isManual() ? Step::Partition : Step::Account);
+        m_manual = false;
+        go(Step::Account);
         break;
     case Step::Partition:
         go(Step::Account);
@@ -384,14 +376,15 @@ void InstallerWindow::primaryClicked()
     }
 }
 
-void InstallerWindow::secondaryClicked()
+void InstallerWindow::backClicked()
 {
     switch (m_step) {
     case Step::Language:
+    case Step::Progress:
+    case Step::Result:
         break;
     case Step::Welcome:
-    case Step::Result:
-        Application::instance()->quit();
+        go(Step::Language);
         break;
     case Step::Disk:
         go(Step::Welcome);
@@ -400,7 +393,7 @@ void InstallerWindow::secondaryClicked()
         go(Step::Disk);
         break;
     case Step::Account:
-        go(isManual() ? Step::Partition : Step::Disk);
+        go(m_manual ? Step::Partition : Step::Disk);
         break;
     case Step::TimeZone:
         go(Step::Account);
@@ -408,7 +401,23 @@ void InstallerWindow::secondaryClicked()
     case Step::Summary:
         go(Step::TimeZone);
         break;
-    case Step::Progress:
+    }
+}
+
+void InstallerWindow::otherClicked()
+{
+    switch (m_step) {
+    case Step::Welcome:
+    case Step::Result:
+        Application::instance()->quit();
+        break;
+    case Step::Disk:
+        if (m_disk->selectedDisk()) {
+            m_manual = true;
+            go(Step::Partition);
+        }
+        break;
+    default:
         break;
     }
 }
@@ -433,12 +442,7 @@ void InstallerWindow::fillSummary()
     installer::Options options;
     m_account->fill(options);
     m_summary->setSummary(options, *m_disk->selectedDisk(), *m_timeZone->selectedZone(),
-                          isManual() ? &m_partition->plan() : nullptr);
-}
-
-bool InstallerWindow::isManual() const
-{
-    return m_disk->isManual();
+                          m_manual ? &m_partition->plan() : nullptr);
 }
 
 void InstallerWindow::loadLayout()
@@ -461,7 +465,7 @@ void InstallerWindow::install()
 {
     installer::Options options;
     options.disk = m_disk->selectedDisk()->path;
-    if (isManual())
+    if (m_manual)
         options.partitioning = m_partition->plan().toMap();
     m_account->fill(options);
     options.timeZone = m_timeZone->selectedZone()->id;
@@ -494,8 +498,3 @@ void InstallerWindow::restart()
         CF_WARNING(kLog) << "cutefish-installer: cannot ask the session to restart";
 }
 
-bool InstallerWindow::isBackgroundLoaded() const
-{
-    const ImageView::Status status = m_root->wallpaper->status();
-    return status == ImageView::Status::Ready || status == ImageView::Status::Error;
-}

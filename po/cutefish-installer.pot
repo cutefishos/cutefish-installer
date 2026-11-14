@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: cutefish-installer\n"
 "Report-Msgid-Bugs-To: https://github.com/cutefishos\n"
-"POT-Creation-Date: 2026-11-13 18:15+0800\n"
+"POT-Creation-Date: 2026-11-14 10:00+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -107,19 +107,20 @@ msgid "Install Cutefish"
 msgstr ""
 
 #: src/installerwindow.cpp
-msgid "Back"
+msgid "Continue"
 msgstr ""
 
 #: src/installerwindow.cpp
-msgid "Continue"
+msgid "Back"
 msgstr ""
 
 #: src/installerwindow.cpp
 msgid "Try Cutefish"
 msgstr ""
 
+#. TRANSLATORS: A button: choose the partitions by hand instead of erasing the disk.
 #: src/installerwindow.cpp
-msgid "Next"
+msgid "Partition Manually"
 msgstr ""
 
 #: src/installerwindow.cpp
@@ -171,14 +172,6 @@ msgstr ""
 msgid "Cutefish uses the whole disk. Everything on it will be erased."
 msgstr ""
 
-#: src/pages.cpp
-msgid "Partition manually"
-msgstr ""
-
-#: src/pages.cpp
-msgid "Choose the partitions on the next page."
-msgstr ""
-
 #. TRANSLATORS: Beside a disk; {size} is a size such as "12.0 GB".
 #: src/pages.cpp
 #, python-brace-format
@@ -218,8 +211,9 @@ msgstr ""
 msgid "Password"
 msgstr ""
 
+#. TRANSLATORS: In the empty field where the password is typed a second time.
 #: src/pages.cpp
-msgid "Confirm password"
+msgid "Verify"
 msgstr ""
 
 #. TRANSLATORS: In an empty field that must be filled in.
@@ -256,6 +250,11 @@ msgstr ""
 msgid "Search for a city or country"
 msgstr ""
 
+#. TRANSLATORS: Where the cities found would be listed, when the search finds none.
+#: src/pages.cpp
+msgid "No Results"
+msgstr ""
+
 #: src/pages.cpp
 msgid "Ready to Install"
 msgstr ""
@@ -264,18 +263,14 @@ msgstr ""
 msgid "Check your choices. Go back to change any of them."
 msgstr ""
 
-#: src/pages.cpp
-msgid "Disk"
-msgstr ""
-
-#: src/pages.cpp
-msgid "Time zone"
-msgstr ""
-
-#. TRANSLATORS: {disk} is a disk's name and size, such as "Samsung SSD (512.1 GB)".
+#. TRANSLATORS: Under a disk's name; {disk} is its size, such as "512.1 GB".
 #: src/pages.cpp
 #, python-brace-format
 msgid "Partitioned manually, {disk}"
+msgstr ""
+
+#: src/pages.cpp
+msgid "No existing partition is erased."
 msgstr ""
 
 #: src/pages.cpp
@@ -291,10 +286,6 @@ msgstr ""
 #: src/pages.cpp
 #, python-brace-format
 msgid "Everything on {partitions} will be erased. This cannot be undone."
-msgstr ""
-
-#: src/pages.cpp
-msgid "No existing partition is erased."
 msgstr ""
 
 #: src/pages.cpp

@@ -30,6 +30,8 @@ dbus::VariantMap toMap(const Options& options)
     };
     if (!options.language.empty())
         map["language"] = dbus::Variant(options.language);
+    if (!options.picture.empty())
+        map["picture"] = dbus::Variant(options.picture);
     if (!options.partitioning.empty())
         map["partitioning"] = dbus::Variant(options.partitioning);
     return map;
@@ -59,6 +61,12 @@ std::optional<Options> optionsFromMap(const dbus::VariantMap& map)
         if (!language)
             return std::nullopt;
         options.language = *language;
+    }
+    if (const auto found = map.find("picture"); found != map.end()) {
+        const std::optional<std::string> picture = found->second.get<std::string>();
+        if (!picture)
+            return std::nullopt;
+        options.picture = *picture;
     }
     if (const auto found = map.find("partitioning"); found != map.end()) {
         const std::optional<dbus::VariantMap> partitioning = found->second.get<dbus::VariantMap>();
@@ -91,6 +99,12 @@ bool isValidHostName(std::string_view name)
             return false;
     }
     return true;
+}
+
+bool isValidPictureName(std::string_view name)
+{
+    return !name.empty() && name.size() <= 255 && name.front() != '.' && name.find('/') == std::string_view::npos
+            && name.find('\0') == std::string_view::npos;
 }
 
 bool isValidLocale(const std::string& locale, const std::string& supported)

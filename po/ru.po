@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: cutefish-installer\n"
 "Report-Msgid-Bugs-To: https://github.com/cutefishos\n"
-"POT-Creation-Date: 2026-11-13 18:15+0800\n"
+"POT-Creation-Date: 2026-11-14 10:00+0800\n"
 "PO-Revision-Date: 2026-11-13 12:00+0800\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -107,20 +107,21 @@ msgid "Install Cutefish"
 msgstr "Установить Cutefish"
 
 #: src/installerwindow.cpp
-msgid "Back"
-msgstr "Назад"
-
-#: src/installerwindow.cpp
 msgid "Continue"
 msgstr "Продолжить"
+
+#: src/installerwindow.cpp
+msgid "Back"
+msgstr "Назад"
 
 #: src/installerwindow.cpp
 msgid "Try Cutefish"
 msgstr "Попробовать Cutefish"
 
+#. TRANSLATORS: A button: choose the partitions by hand instead of erasing the disk.
 #: src/installerwindow.cpp
-msgid "Next"
-msgstr "Продолжить"
+msgid "Partition Manually"
+msgstr "Разметить вручную"
 
 #: src/installerwindow.cpp
 msgid "Install"
@@ -171,14 +172,6 @@ msgstr "Выберите диск"
 msgid "Cutefish uses the whole disk. Everything on it will be erased."
 msgstr "Cutefish займет весь диск. Все данные на нем будут стерты."
 
-#: src/pages.cpp
-msgid "Partition manually"
-msgstr "Разметить вручную"
-
-#: src/pages.cpp
-msgid "Choose the partitions on the next page."
-msgstr "Разделы можно будет выбрать на следующей странице."
-
 #. TRANSLATORS: Beside a disk; {size} is a size such as "12.0 GB".
 #: src/pages.cpp
 #, python-brace-format
@@ -218,9 +211,10 @@ msgstr "Имя компьютера"
 msgid "Password"
 msgstr "Пароль"
 
+#. TRANSLATORS: In the empty field where the password is typed a second time.
 #: src/pages.cpp
-msgid "Confirm password"
-msgstr "Повторите пароль"
+msgid "Verify"
+msgstr "Повторите"
 
 #. TRANSLATORS: In an empty field that must be filled in.
 #: src/pages.cpp
@@ -256,6 +250,11 @@ msgstr "Часы показывают время выбранного часов
 msgid "Search for a city or country"
 msgstr "Поиск города или страны"
 
+#. TRANSLATORS: Where the cities found would be listed, when the search finds none.
+#: src/pages.cpp
+msgid "No Results"
+msgstr "Нет результатов"
+
 #: src/pages.cpp
 msgid "Ready to Install"
 msgstr "Все готово к установке"
@@ -264,19 +263,15 @@ msgstr "Все готово к установке"
 msgid "Check your choices. Go back to change any of them."
 msgstr "Проверьте выбранные параметры. Чтобы что-то изменить, вернитесь назад."
 
-#: src/pages.cpp
-msgid "Disk"
-msgstr "Диск"
-
-#: src/pages.cpp
-msgid "Time zone"
-msgstr "Часовой пояс"
-
-#. TRANSLATORS: {disk} is a disk's name and size, such as "Samsung SSD (512.1 GB)".
+#. TRANSLATORS: Under a disk's name; {disk} is its size, such as "512.1 GB".
 #: src/pages.cpp
 #, python-brace-format
 msgid "Partitioned manually, {disk}"
 msgstr "Ручная разметка, {disk}"
+
+#: src/pages.cpp
+msgid "No existing partition is erased."
+msgstr "Существующие разделы не будут стерты."
 
 #: src/pages.cpp
 #, python-brace-format
@@ -292,10 +287,6 @@ msgstr "Все разделы на диске {disk} будут удалены. 
 #, python-brace-format
 msgid "Everything on {partitions} will be erased. This cannot be undone."
 msgstr "Все данные на разделах {partitions} будут стерты. Это действие нельзя отменить."
-
-#: src/pages.cpp
-msgid "No existing partition is erased."
-msgstr "Существующие разделы не будут стерты."
 
 #: src/pages.cpp
 msgid "Installing Cutefish"

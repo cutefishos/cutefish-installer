@@ -86,3 +86,8 @@ bool matchesTimeZone(const TimeZone& zone, std::string_view query)
     }
     return true;
 }
+
+bool cityBeginsWith(const TimeZone& zone, std::string_view query)
+{
+    return strings::toAsciiLower(zone.city).starts_with(strings::toAsciiLower(strings::trimmed(query)));
+}

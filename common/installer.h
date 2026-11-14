@@ -35,6 +35,9 @@ struct Options
     // The locale the installed system starts in, such as "de_DE.UTF-8";
     // empty keeps the live system's.
     std::string language;
+    // The file name of the preset the account's picture is; empty leaves the
+    // choice to the service.
+    std::string picture;
     // A PartitionPlan's toMap(), empty to erase the disk.
     cutefish::base::dbus::VariantMap partitioning;
 };
@@ -49,6 +52,8 @@ bool isValidHostName(std::string_view name);
 // A locale the system can generate in UTF-8, as the SUPPORTED file lists it,
 // such as "de_DE.UTF-8".
 bool isValidLocale(const std::string& locale, const std::string& supported = "/usr/share/i18n/SUPPORTED");
+// A plain file name, as Options::picture is one.
+bool isValidPictureName(std::string_view name);
 // An Area/Location name below `zoneinfo` that names a zone file.
 bool isValidTimeZone(const std::string& zone, const std::string& zoneinfo = "/usr/share/zoneinfo");
 // The first word of the full name in lower case, when it is plain ASCII;

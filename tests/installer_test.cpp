@@ -84,6 +84,26 @@ TEST(Installer, languageOption)
     EXPECT_FALSE(optionsFromMap(map));
 }
 
+TEST(Installer, pictureOption)
+{
+    Options options {"/dev/sda", "Reion Wong", "reion", "secret", "reion-pc", "Asia/Singapore"};
+    EXPECT_FALSE(toMap(options).contains("picture"));
+    EXPECT_EQ(optionsFromMap(toMap(options))->picture, "");
+
+    options.picture = "city-night.jpg";
+    cutefish::base::dbus::VariantMap map = toMap(options);
+    EXPECT_EQ(optionsFromMap(map)->picture, "city-night.jpg");
+    map["picture"] = cutefish::base::dbus::Variant(true);
+    EXPECT_FALSE(optionsFromMap(map));
+
+    EXPECT_TRUE(isValidPictureName("city-night.jpg"));
+    EXPECT_FALSE(isValidPictureName(""));
+    EXPECT_FALSE(isValidPictureName(".."));
+    EXPECT_FALSE(isValidPictureName(".hidden.jpg"));
+    EXPECT_FALSE(isValidPictureName("../../etc/shadow"));
+    EXPECT_FALSE(isValidPictureName("a/b.jpg"));
+}
+
 TEST(Installer, locales)
 {
     const std::filesystem::path directory = std::filesystem::temp_directory_path()

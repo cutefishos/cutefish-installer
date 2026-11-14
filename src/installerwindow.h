@@ -26,8 +26,8 @@ class SummaryPage;
 class ProgressPage;
 class ResultPage;
 
-// The installer, full screen: the language, a welcome that lets the system be
-// tried instead, the choices one page each, then the installation.
+// The installer: the language, a welcome that lets the system be tried
+// instead, the choices one page each, then the installation.
 class InstallerWindow
 {
 public:
@@ -61,8 +61,6 @@ public:
     SummaryPage* summaryPage() const { return m_summary; }
     ProgressPage* progressPage() const { return m_progress; }
     ResultPage* resultPage() const { return m_result; }
-    // The wallpaper behind the panel is decoded, or failed to be.
-    bool isBackgroundLoaded() const;
 
 private:
     class Root;
@@ -76,12 +74,12 @@ private:
     void go(Step step);
     void updateButtons();
     void primaryClicked();
-    void secondaryClicked();
+    void backClicked();
+    void otherClicked();
     void languageChosen();
     void fillSummary();
     void loadDisks();
     void loadLayout();
-    bool isManual() const;
     void install();
     void finished(bool success, const std::string& error);
     void restart();
@@ -99,6 +97,8 @@ private:
     ProgressPage* m_progress = nullptr;
     ResultPage* m_result = nullptr;
     Step m_step = Step::Language;
+    // The partitions are chosen by hand instead of erasing the disk.
+    bool m_manual = false;
     std::unique_ptr<cutefish::ui::Animation> m_transition;
     Page* m_leaving = nullptr;
     bool m_succeeded = false;

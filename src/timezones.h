@@ -26,3 +26,6 @@ std::string currentTimeZone(const std::string& localtime = "/etc/localtime");
 
 // The zone's city, country or id holds every word of the query, ignoring case.
 bool matchesTimeZone(const TimeZone& zone, std::string_view query);
+// The zone's city begins with the query, ignoring case: the matches a search
+// lists first.
+bool cityBeginsWith(const TimeZone& zone, std::string_view query);

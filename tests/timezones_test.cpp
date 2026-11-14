@@ -34,4 +34,8 @@ TEST(TimeZones, match)
     EXPECT_TRUE(matchesTimeZone(zone, "united york"));
     EXPECT_TRUE(matchesTimeZone(zone, "America"));
     EXPECT_FALSE(matchesTimeZone(zone, "berlin"));
+
+    EXPECT_TRUE(cityBeginsWith(zone, " New y"));
+    EXPECT_FALSE(cityBeginsWith(zone, "york"));
+    EXPECT_FALSE(cityBeginsWith(zone, "united"));
 }

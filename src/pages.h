@@ -12,17 +12,19 @@
 #include "common/partitioning.h"
 
 #include <functional>
+#include <memory>
 #include <string>
 #include <vector>
 
 namespace cutefish::ui {
 class BusyIndicator;
-class CheckBox;
+class DropDownPopup;
 class ListView;
 class ProgressBar;
 class SearchField;
 class TextField;
 }
+
 
 // The languages, each in its own name; the one chosen is spoken from then on.
 class LanguagePage : public Page
@@ -54,7 +56,8 @@ public:
     WelcomePage();
 };
 
-// The disks to install on, one chosen.
+// The disks to install on, one chosen: side by side as tiles, or as a list
+// when there are more than fit.
 class DiskPage : public Page
 {
 public:
@@ -66,38 +69,44 @@ public:
     void setError(const std::string& error);
     // Null while none is chosen.
     const DiskInfo* selectedDisk() const;
-    // The partitions are chosen by hand instead of erasing the disk.
-    bool isManual() const;
-    // The disks and choices of a page made in another language.
+    // The disks and the choice of a page made in another language.
     void takeStateFrom(const DiskPage& other);
 
     std::function<void()> onSelectionChanged;
 
+    double contentWidth() const override;
     double contentHeight() const override;
 
 protected:
     void layoutContent() override;
 
 private:
-    void select(int index);
-    void updateSubtitle();
-    double cardHeight() const;
+    class Tile;
 
+    bool isUsable(const DiskInfo& disk) const;
+    std::string detailOf(const DiskInfo& disk, bool withPath) const;
+    void select(int index);
+    bool showsTiles() const;
+    double tileHeight() const;
+    double listHeight() const;
+
+    cutefish::ui::View* m_row;
+    std::vector<Tile*> m_tiles;
     Card* m_card;
+    cutefish::ui::ListView* m_list;
     cutefish::ui::BusyIndicator* m_busy;
     cutefish::ui::Label* m_message;
-    cutefish::ui::CheckBox* m_manual;
-    std::vector<ChoiceRow*> m_rows;
     std::vector<DiskInfo> m_disks;
     int m_selected = -1;
     bool m_loading = true;
 };
 
-// The first user, and the computer's name.
+// The first user and their picture, and the computer's name.
 class AccountPage : public Page
 {
 public:
     AccountPage();
+    ~AccountPage() override;
 
     // Everything filled in and valid.
     bool isComplete() const;
@@ -115,6 +124,9 @@ protected:
     void layoutContent() override;
 
 private:
+    class Form;
+    class PictureGrid;
+
     struct Field
     {
         cutefish::ui::Label* caption;
@@ -122,28 +134,38 @@ private:
     };
 
     Field addField(const std::string& caption);
+    cutefish::ui::TextField* addTextField();
+    void choosePicture();
     std::string problem() const;
     void changed();
 
-    Card* m_card;
+    // Null without pictures to choose from.
+    AccountPicture* m_picture = nullptr;
+    std::unique_ptr<cutefish::ui::DropDownPopup> m_picker;
+    PictureGrid* m_grid = nullptr;
+    Form* m_card;
     Field m_fullName;
     Field m_userName;
     Field m_hostName;
     Field m_password;
-    Field m_confirm;
+    cutefish::ui::TextField* m_confirm;
     cutefish::ui::Label* m_message;
     bool m_userNameEdited = false;
     bool m_hostNameEdited = false;
 };
 
+// The zone chosen is a pin on the map; a press on the map takes the nearest
+// city's, and the search lists the cities and countries by name.
 class TimeZonePage : public Page
 {
 public:
     TimeZonePage();
 
-    // Empty while none is chosen.
+    // Null while none is chosen.
     const TimeZone* selectedZone() const;
     void scrollToSelection();
+    // What the search field holds.
+    void setQuery(const std::string& query);
     void takeStateFrom(const TimeZonePage& other);
 
     std::function<void()> onSelectionChanged;
@@ -154,11 +176,13 @@ protected:
     void layoutContent() override;
 
 private:
+    void select(int index);
     void filter();
 
     cutefish::ui::SearchField* m_search;
     Card* m_card;
     cutefish::ui::ListView* m_list;
+    cutefish::ui::Label* m_empty;
     std::vector<TimeZone> m_zones;
     std::vector<size_t> m_shown;
     int m_selected = -1;
@@ -183,8 +207,10 @@ protected:
 
 private:
     Card* m_card;
-    std::vector<SummaryRow*> m_rows;
-    cutefish::ui::Label* m_warning;
+    SummaryItem* m_disk;
+    SummaryItem* m_account;
+    SummaryItem* m_zone;
+    Callout* m_warning;
     bool m_erases = true;
 };
 
@@ -199,10 +225,13 @@ public:
     double contentHeight() const override;
 
 protected:
+    void layout() override;
     void layoutContent() override;
 
 private:
     cutefish::ui::ProgressBar* m_bar;
+    cutefish::ui::Label* m_stageText;
+    // Where the window's buttons are on the other pages.
     cutefish::ui::Label* m_hint;
     std::string m_stage;
     double m_fraction = 0;

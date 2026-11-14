@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: cutefish-installer\n"
 "Report-Msgid-Bugs-To: https://github.com/cutefishos\n"
-"POT-Creation-Date: 2026-11-13 18:15+0800\n"
+"POT-Creation-Date: 2026-11-14 10:00+0800\n"
 "PO-Revision-Date: 2026-11-13 17:29+0800\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -107,20 +107,21 @@ msgid "Install Cutefish"
 msgstr "安裝 Cutefish"
 
 #: src/installerwindow.cpp
-msgid "Back"
-msgstr "返回"
-
-#: src/installerwindow.cpp
 msgid "Continue"
 msgstr "繼續"
+
+#: src/installerwindow.cpp
+msgid "Back"
+msgstr "返回"
 
 #: src/installerwindow.cpp
 msgid "Try Cutefish"
 msgstr "試用 Cutefish"
 
+#. TRANSLATORS: A button: choose the partitions by hand instead of erasing the disk.
 #: src/installerwindow.cpp
-msgid "Next"
-msgstr "繼續"
+msgid "Partition Manually"
+msgstr "手動分割"
 
 #: src/installerwindow.cpp
 msgid "Install"
@@ -171,14 +172,6 @@ msgstr "選擇磁碟"
 msgid "Cutefish uses the whole disk. Everything on it will be erased."
 msgstr "Cutefish 會使用整個磁碟。磁碟上的所有內容都將被清除。"
 
-#: src/pages.cpp
-msgid "Partition manually"
-msgstr "手動分割"
-
-#: src/pages.cpp
-msgid "Choose the partitions on the next page."
-msgstr "請在下一頁選擇分割區。"
-
 #. TRANSLATORS: Beside a disk; {size} is a size such as "12.0 GB".
 #: src/pages.cpp
 #, python-brace-format
@@ -218,9 +211,10 @@ msgstr "電腦名稱"
 msgid "Password"
 msgstr "密碼"
 
+#. TRANSLATORS: In the empty field where the password is typed a second time.
 #: src/pages.cpp
-msgid "Confirm password"
-msgstr "確認密碼"
+msgid "Verify"
+msgstr "確認"
 
 #. TRANSLATORS: In an empty field that must be filled in.
 #: src/pages.cpp
@@ -256,6 +250,11 @@ msgstr "時鐘會依照時區顯示時間。您之後可以在「設定」中更
 msgid "Search for a city or country"
 msgstr "搜尋城市或國家"
 
+#. TRANSLATORS: Where the cities found would be listed, when the search finds none.
+#: src/pages.cpp
+msgid "No Results"
+msgstr "沒有結果"
+
 #: src/pages.cpp
 msgid "Ready to Install"
 msgstr "準備安裝"
@@ -264,19 +263,15 @@ msgstr "準備安裝"
 msgid "Check your choices. Go back to change any of them."
 msgstr "請確認您的選擇。返回上一步即可更改。"
 
-#: src/pages.cpp
-msgid "Disk"
-msgstr "磁碟"
-
-#: src/pages.cpp
-msgid "Time zone"
-msgstr "時區"
-
-#. TRANSLATORS: {disk} is a disk's name and size, such as "Samsung SSD (512.1 GB)".
+#. TRANSLATORS: Under a disk's name; {disk} is its size, such as "512.1 GB".
 #: src/pages.cpp
 #, python-brace-format
 msgid "Partitioned manually, {disk}"
 msgstr "手動分割，{disk}"
+
+#: src/pages.cpp
+msgid "No existing partition is erased."
+msgstr "不會清除任何現有的分割區。"
 
 #: src/pages.cpp
 #, python-brace-format
@@ -292,10 +287,6 @@ msgstr "{disk} 上的所有分割區都將被刪除。此操作無法還原。"
 #, python-brace-format
 msgid "Everything on {partitions} will be erased. This cannot be undone."
 msgstr "{partitions} 上的所有內容都將被清除。此操作無法還原。"
-
-#: src/pages.cpp
-msgid "No existing partition is erased."
-msgstr "不會清除任何現有的分割區。"
 
 #: src/pages.cpp
 msgid "Installing Cutefish"

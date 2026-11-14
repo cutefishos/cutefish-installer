@@ -215,6 +215,8 @@ std::string InstallerService::checkOptions(const installer::Options& options, in
         return "Not a time zone: " + options.timeZone;
     if (!options.language.empty() && !installer::isValidLocale(options.language))
         return "Not a locale the system can use: " + options.language;
+    if (!options.picture.empty() && !installer::isValidPictureName(options.picture))
+        return "Not an account picture: " + options.picture;
     return {};
 }
 

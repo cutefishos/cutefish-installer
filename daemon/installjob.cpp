@@ -368,6 +368,11 @@ bool InstallJob::setUserPicture()
         return true;
     std::random_device device;
     std::uniform_int_distribution<size_t> pick(0, pictures.size() - 1);
+    fs::path picture = pictures[pick(device)];
+    // The one chosen, when the installed system has it.
+    if (const fs::path chosen = fs::path(inTarget(kPresetPictures)) / m_options.picture;
+        !m_options.picture.empty() && fs::is_regular_file(chosen, error))
+        picture = chosen;
 
     const std::string icons = "/var/lib/AccountsService/icons";
     const std::string users = "/var/lib/AccountsService/users";
@@ -375,7 +380,7 @@ bool InstallJob::setUserPicture()
     fs::create_directories(inTarget(users), error);
     ::chmod(inTarget(users).c_str(), 0700);
     const std::string icon = icons + '/' + m_options.userName;
-    if (!fs::copy_file(pictures[pick(device)], inTarget(icon), fs::copy_options::overwrite_existing, error))
+    if (!fs::copy_file(picture, inTarget(icon), fs::copy_options::overwrite_existing, error))
         return fail("Cannot set the account picture: " + error.message());
     ::chmod(inTarget(icon).c_str(), 0644);
     return writeFile(inTarget(users + '/' + m_options.userName), plan::accountsServiceUser(icon), 0600);

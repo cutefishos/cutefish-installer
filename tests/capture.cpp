@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: BSD-3-Clause
 
 // Renders every step headless, with made-up disks and choices:
-//   installer-capture DIR DATA_DIR [WIDTH HEIGHT SCALE [dark]]
+//   installer-capture DIR DATA_DIR [SCALE [dark]]
 // and prints each text that does not fit its place, for a run in another
 // language; the exit status is 2 when one does not.
 #include "backend.h"
@@ -12,7 +12,6 @@
 #include "partitionpage.h"
 
 #include "base/i18n.h"
-#include "base/timer.h"
 #include "ui/application.h"
 #include "ui/check_box.h"
 #include "ui/combo_box.h"
@@ -110,15 +109,13 @@ static void checkMessages(const std::string& state, const std::vector<std::strin
 int main(int argc, char** argv)
 {
     if (argc < 3) {
-        std::fprintf(stderr, "usage: %s DIR DATA_DIR [WIDTH HEIGHT SCALE [dark]]\n", argv[0]);
+        std::fprintf(stderr, "usage: %s DIR DATA_DIR [SCALE [dark]]\n", argv[0]);
         return 1;
     }
     const std::string directory = argv[1];
     setDataDirectory(argv[2]);
-    const double width = argc > 3 ? std::atof(argv[3]) : 1440;
-    const double height = argc > 4 ? std::atof(argv[4]) : 960;
-    const double scale = argc > 5 ? std::atof(argv[5]) : 1.5;
-    const bool dark = argc > 6 && std::string(argv[6]) == "dark";
+    const double scale = argc > 3 ? std::atof(argv[3]) : 1.5;
+    const bool dark = argc > 4 && std::string(argv[4]) == "dark";
     std::filesystem::create_directories(directory);
 
     ui::Application app(argc, argv, ui::Application::Platform::Headless);
@@ -127,19 +124,9 @@ int main(int argc, char** argv)
     Backend backend(nullptr);
     InstallerWindow window(backend);
     window.window().setScale(scale);
-    window.window().resize({width, height});
-
-    // The wallpaper decodes on a thread once the window is first drawn.
-    window.window().grab();
-    base::Timer poll;
-    poll.onTimeout = [&] {
-        window.window().grab();
-        if (window.isBackgroundLoaded())
-            app.quit();
-    };
-    poll.start(std::chrono::milliseconds(20));
-    app.run();
-    poll.stop();
+    const ui::SizeF size = window.window().size();
+    if (size.width != kWindowWidth || size.height != kWindowHeight)
+        report("window", "size " + std::to_string(size.width) + "x" + std::to_string(size.height));
 
     const auto save = [&](const std::string& name) {
         window.window().grab().savePng(directory + "/" + name + ".png");
@@ -159,6 +146,19 @@ int main(int argc, char** argv)
             {"/dev/sdb", "Generic Flash Disk", 8053063680, true},
     });
     save("2-disk");
+    // Two of one model, told apart by their paths.
+    window.diskPage()->setDisks({
+            {"/dev/nvme0n1", "Samsung SSD 990 PRO 2TB", 2000398934016, false},
+            {"/dev/nvme1n1", "Samsung SSD 990 PRO 2TB", 2000398934016, false},
+    });
+    save("2-disk-same");
+    // More than stand side by side.
+    std::vector<DiskInfo> many;
+    for (int i = 0; i < 7; ++i)
+        many.push_back({"/dev/sd" + std::string(1, char('a' + i)), "WDC WD40EFAX-68JH4N" + std::to_string(i),
+                        4000787030016, false});
+    window.diskPage()->setDisks(many, "/dev/sdb");
+    save("2-disk-many");
     window.diskPage()->setDisks({});
     save("2-disk-none");
     window.diskPage()->setDisks({{"/dev/nvme0n1", "YMTC PC005 512GB", 512110190592, false}});
@@ -168,8 +168,16 @@ int main(int argc, char** argv)
     window.showStep(InstallerWindow::Step::TimeZone);
     window.timeZonePage()->scrollToSelection();
     save("4-timezone");
+    window.timeZonePage()->setQuery("san");
+    save("4-timezone-search");
+    window.timeZonePage()->setQuery("nowhere at all");
+    save("4-timezone-none");
+    window.timeZonePage()->setQuery({});
 
     installer::Options options {"/dev/nvme0n1", "Reion Wong", "reion", "secret", "reion-pc", "Asia/Singapore"};
+    installer::Options typed;
+    window.accountPage()->fill(typed);
+    options.picture = typed.picture;
     const TimeZone singapore {"Asia/Singapore", "Singapore", "Singapore", "UTC+08:00"};
     window.summaryPage()->setSummary(options, *window.diskPage()->selectedDisk(), singapore, nullptr);
     window.showStep(InstallerWindow::Step::Summary);
@@ -239,6 +247,7 @@ int main(int argc, char** argv)
     const TimeZone longZone {"America/Port_of_Spain", "Port of Spain", "Trinidad and Tobago", "UTC-04:00"};
     installer::Options longOptions {"/dev/nvme0n1", "Maximilian Alexander Ferdinand von Habsburg", "maximilian",
                                     "secret", std::string(60, 'm') + "-pc", "America/Port_of_Spain"};
+    longOptions.picture = options.picture;
     window.summaryPage()->setSummary(longOptions, longDisk, longZone, nullptr);
     save("5-summary-long");
     window.summaryPage()->setSummary(longOptions, longDisk, longZone, &partitions->plan());
@@ -257,12 +266,13 @@ int main(int argc, char** argv)
 
     using i18n::format;
     using i18n::tr;
-    // The rows of buttons the steps show, each at least 128 wide, 12 apart,
-    // with the panel's 32 at both ends.
+    // The buttons the steps show along the bottom, one at the left and the
+    // others at the right: each at least 112 wide, 12 apart, with the
+    // window's 32 at both ends.
     const std::vector<std::vector<std::string>> rows {
             {tr("Continue")},
-            {tr("Back"), tr("Try Cutefish"), tr("Next")},
-            {tr("Back"), tr("Continue")},
+            {tr("Try Cutefish"), tr("Back"), tr("Continue")},
+            {tr("Partition Manually"), tr("Back"), tr("Continue")},
             {tr("Back"), tr("Install")},
             {tr("Back"), tr("Erase Disk and Install")},
             {tr("Keep Trying"), tr("Restart Now")},
@@ -271,8 +281,8 @@ int main(int argc, char** argv)
     for (const std::vector<std::string>& row : rows) {
         double total = 12 * double(row.size() - 1);
         for (const std::string& text : row)
-            total += std::max(128.0, ui::DialogButton(text).sizeHint().width);
-        if (total > kPanelWidth - 64)
+            total += std::max(112.0, ui::DialogButton(text).sizeHint().width);
+        if (total > kWindowWidth - 2 * kWindowMargin)
             report("buttons", "\"" + row.back() + "\" row needs " + std::to_string(int(total)));
     }
     // Under the account form, two lines kept for them.

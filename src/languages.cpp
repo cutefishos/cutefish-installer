@@ -7,32 +7,7 @@
 #include "base/paths.h"
 #include "base/settings.h"
 
-#include <unicode/locdspnm.h>
 #include <unicode/locid.h>
-#include <unicode/uchar.h>
-
-#include <memory>
-
-// The name a language gives itself, as a list shows it: "Español",
-// "Português (Brasil)", Chinese by its script.
-static std::string ownName(const char* id)
-{
-    const icu::Locale locale(id);
-    UDisplayContext contexts[] = {UDISPCTX_DIALECT_NAMES, UDISPCTX_CAPITALIZATION_FOR_UI_LIST_OR_MENU};
-    const std::unique_ptr<icu::LocaleDisplayNames> names(
-            icu::LocaleDisplayNames::createInstance(locale, contexts, std::size(contexts)));
-    icu::UnicodeString name;
-    if (names)
-        names->localeDisplayName(locale, name);
-    // CLDR leaves some languages, Polish among them, lower case in UI lists.
-    if (!name.isEmpty()) {
-        const UChar32 first = name.char32At(0);
-        name.replace(0, U16_LENGTH(first), icu::UnicodeString(u_totitle(first)));
-    }
-    std::string utf8;
-    name.toUTF8String(utf8);
-    return utf8.empty() ? std::string(id) : utf8;
-}
 
 const std::vector<InstallerLanguage>& installerLanguages()
 {
@@ -41,7 +16,7 @@ const std::vector<InstallerLanguage>& installerLanguages()
         {
             const char* code;
             const char* locale;
-            // What ownName() reads the name for.
+            // The id whose dialect name the list shows: "Español", "简体中文".
             const char* nameId;
         } kLanguages[] = {
                 {"en_US", "en_US.UTF-8", "en"},
@@ -61,9 +36,12 @@ const std::vector<InstallerLanguage>& installerLanguages()
                 {"zh_Hans_CN", "zh_CN.UTF-8", "zh_Hans"},
                 {"zh_Hant_TW", "zh_TW.UTF-8", "zh_Hant"},
         };
+        using cutefish::base::Locale;
         std::vector<InstallerLanguage> list;
-        for (const auto& language : kLanguages)
-            list.push_back({language.code, language.locale, ownName(language.nameId)});
+        for (const auto& language : kLanguages) {
+            list.push_back({language.code, language.locale,
+                            Locale::languageName(language.nameId, language.nameId, Locale::LanguageNames::Dialect)});
+        }
         return list;
     }();
     return languages;

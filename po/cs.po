@@ -1,0 +1,462 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: cutefish-installer\n"
+"Report-Msgid-Bugs-To: https://github.com/cutefishos\n"
+"POT-Creation-Date: 2026-11-14 10:00+0800\n"
+"PO-Revision-Date: 2026-11-14 10:00+0800\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: cs\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
+
+#: common/partitioning.cpp
+msgid "The disk has no partition table. Create one first."
+msgstr "Disk nemá tabulku oddílů. Nejprve ji vytvořte."
+
+#: common/partitioning.cpp
+msgid "A disk with an MBR partition table holds at most four partitions."
+msgstr "Disk s tabulkou oddílů MBR může mít nejvýše čtyři oddíly."
+
+#: common/partitioning.cpp
+#, python-brace-format
+msgid "“{mount}” is not a mount point the system can use."
+msgstr "„{mount}“ není přípojný bod, který systém může použít."
+
+#: common/partitioning.cpp
+#, python-brace-format
+msgid "Two partitions are given “{mount}”."
+msgstr "Přípojný bod „{mount}“ mají dva oddíly."
+
+#: common/partitioning.cpp
+msgid "Only a disk with a GPT partition table needs a BIOS boot partition."
+msgstr "Zaváděcí oddíl BIOS potřebuje jen disk s tabulkou oddílů GPT."
+
+#: common/partitioning.cpp
+msgid "Only a new partition, or one made for it, can be the BIOS boot partition."
+msgstr "Zaváděcím oddílem BIOS může být jen nový oddíl nebo oddíl pro něj vytvořený."
+
+#: common/partitioning.cpp
+#, python-brace-format
+msgid "The partition for “{mount}” must be formatted."
+msgstr "Oddíl pro „{mount}“ musí být naformátován."
+
+#: common/partitioning.cpp
+#, python-brace-format
+msgid "“{type}” cannot be used for “{mount}”."
+msgstr "„{type}“ nelze použít pro „{mount}“."
+
+#: common/partitioning.cpp
+#, python-brace-format
+msgid "The partition for “{mount}” holds no file system; format it to use it there."
+msgstr "Oddíl pro „{mount}“ neobsahuje žádný souborový systém. Aby ho tam šlo použít, naformátujte ho."
+
+#: common/partitioning.cpp
+#, python-brace-format
+msgid "The partition for “{mount}” holds “{type}”; format it to use it there."
+msgstr "Oddíl pro „{mount}“ obsahuje „{type}“. Aby ho tam šlo použít, naformátujte ho."
+
+#: common/partitioning.cpp
+#, python-brace-format
+msgid "Choose a partition for the system: give one the mount point “{mount}”."
+msgstr "Zvolte oddíl pro systém: přidělte jednomu přípojný bod „{mount}“."
+
+#: common/partitioning.cpp
+#, python-brace-format
+msgid "The partition for “{mount}” needs at least {size} GB."
+msgstr "Oddíl pro „{mount}“ potřebuje alespoň {size} GB."
+
+#: common/partitioning.cpp
+#, python-brace-format
+msgid "Choose an EFI system partition: give one the mount point “{mount}”."
+msgstr "Zvolte systémový oddíl EFI: přidělte jednomu přípojný bod „{mount}“."
+
+#: common/partitioning.cpp
+msgid "The EFI system partition needs at least 32 MB."
+msgstr "Systémový oddíl EFI potřebuje alespoň 32 MB."
+
+#: common/partitioning.cpp
+msgid "Add a 1 MB partition used as BIOS boot, for the boot loader."
+msgstr "Přidejte oddíl o velikosti 1 MB použitý jako zaváděcí oddíl BIOS pro zavaděč."
+
+#: src/backend.cpp
+msgid "The installer service stopped unexpectedly."
+msgstr "Služba instalátoru se neočekávaně zastavila."
+
+#: src/backend.cpp
+msgid "The system bus cannot be reached."
+msgstr "Systémová sběrnice není dostupná."
+
+#: src/backend.cpp
+msgid "The disks cannot be listed."
+msgstr "Disky nelze vypsat."
+
+#: src/backend.cpp
+msgid "The file systems cannot be listed."
+msgstr "Souborové systémy nelze vypsat."
+
+#: src/backend.cpp
+msgid "The partitions cannot be read."
+msgstr "Oddíly nelze načíst."
+
+#: src/installerwindow.cpp data/cutefish-installer.desktop
+#: data/cutefish-installer-autostart.desktop
+msgid "Install Cutefish"
+msgstr "Instalovat Cutefish"
+
+#: src/installerwindow.cpp
+msgid "Continue"
+msgstr "Pokračovat"
+
+#: src/installerwindow.cpp
+msgid "Back"
+msgstr "Zpět"
+
+#: src/installerwindow.cpp
+msgid "Try Cutefish"
+msgstr "Vyzkoušet Cutefish"
+
+#. TRANSLATORS: A button: choose the partitions by hand instead of erasing the disk.
+#: src/installerwindow.cpp
+msgid "Partition Manually"
+msgstr "Rozdělit ručně"
+
+#: src/installerwindow.cpp
+msgid "Install"
+msgstr "Instalovat"
+
+#: src/installerwindow.cpp
+msgid "Erase Disk and Install"
+msgstr "Smazat disk a instalovat"
+
+#. TRANSLATORS: After a successful installation: go on using the live system instead of restarting.
+#: src/installerwindow.cpp
+msgid "Keep Trying"
+msgstr "Zkoušet dál"
+
+#: src/installerwindow.cpp
+msgid "Close"
+msgstr "Zavřít"
+
+#: src/installerwindow.cpp
+msgid "Restart Now"
+msgstr "Restartovat"
+
+#: src/installerwindow.cpp
+msgid "Try Again"
+msgstr "Zkusit znovu"
+
+#: src/pages.cpp
+msgid "Choose Your Language"
+msgstr "Zvolte jazyk"
+
+#: src/pages.cpp
+msgid "The installer and the installed system use this language."
+msgstr "Tento jazyk bude používat instalátor i nainstalovaný systém."
+
+#: src/pages.cpp
+msgid "Welcome to Cutefish"
+msgstr "Vítá vás Cutefish"
+
+#: src/pages.cpp
+msgid "Try Cutefish without changing your computer, or install it now."
+msgstr "Vyzkoušejte Cutefish bez změn v počítači, nebo ho nainstalujte hned."
+
+#: src/pages.cpp
+msgid "Choose a Disk"
+msgstr "Zvolte disk"
+
+#: src/pages.cpp
+msgid "Cutefish uses the whole disk. Everything on it will be erased."
+msgstr "Cutefish použije celý disk. Vše na něm bude smazáno."
+
+#. TRANSLATORS: Beside a disk; {size} is a size such as "12.0 GB".
+#: src/pages.cpp
+#, python-brace-format
+msgid "Too small, needs {size}"
+msgstr "Příliš malý, potřeba {size}"
+
+#: src/pages.cpp
+msgid "No disk was found to install on."
+msgstr "Nebyl nalezen žádný disk pro instalaci."
+
+#: src/pages.cpp
+#, python-brace-format
+msgid "The disks cannot be listed: {error}"
+msgstr "Disky nelze vypsat: {error}"
+
+#: src/pages.cpp
+msgid "Create Your Account"
+msgstr "Vytvořte si účet"
+
+#: src/pages.cpp
+msgid "This account can change settings and install software."
+msgstr "Tento účet může měnit nastavení a instalovat software."
+
+#: src/pages.cpp
+msgid "Full name"
+msgstr "Celé jméno"
+
+#: src/pages.cpp
+msgid "User name"
+msgstr "Uživatelské jméno"
+
+#: src/pages.cpp
+msgid "Computer name"
+msgstr "Název počítače"
+
+#: src/pages.cpp
+msgid "Password"
+msgstr "Heslo"
+
+#. TRANSLATORS: In the empty field where the password is typed a second time.
+#: src/pages.cpp
+msgid "Verify"
+msgstr "Ověřit"
+
+#. TRANSLATORS: In an empty field that must be filled in.
+#: src/pages.cpp
+msgid "Required"
+msgstr "Povinné"
+
+#: src/pages.cpp
+msgid "A user name starts with a lower-case letter and uses only a–z, 0–9, “-” and “_”."
+msgstr "Uživatelské jméno začíná malým písmenem a obsahuje jen a–z, 0–9, „-“ a „_“."
+
+#: src/pages.cpp
+#, python-brace-format
+msgid "“{name}” is taken by the system. Choose another user name."
+msgstr "Jméno „{name}“ používá systém. Zvolte jiné uživatelské jméno."
+
+#: src/pages.cpp
+msgid "A computer name uses only letters, digits and hyphens, and does not start or end with a hyphen."
+msgstr "Název počítače obsahuje jen písmena, číslice a pomlčky a nesmí pomlčkou začínat ani končit."
+
+#: src/pages.cpp
+msgid "The passwords do not match."
+msgstr "Hesla se neshodují."
+
+#: src/pages.cpp
+msgid "Choose Your Time Zone"
+msgstr "Zvolte časové pásmo"
+
+#: src/pages.cpp
+msgid "The clock follows the time zone. You can change it later in Settings."
+msgstr "Hodiny se řídí časovým pásmem. Později ho můžete změnit v Nastavení."
+
+#: src/pages.cpp
+msgid "Search for a city or country"
+msgstr "Hledat město nebo zemi"
+
+#. TRANSLATORS: Where the cities found would be listed, when the search finds none.
+#: src/pages.cpp
+msgid "No Results"
+msgstr "Žádné výsledky"
+
+#: src/pages.cpp
+msgid "Ready to Install"
+msgstr "Připraveno k instalaci"
+
+#: src/pages.cpp
+msgid "Check your choices. Go back to change any of them."
+msgstr "Zkontrolujte své volby. Kteroukoli z nich můžete změnit návratem zpět."
+
+#. TRANSLATORS: Under a disk's name; {disk} is its size, such as "512.1 GB".
+#: src/pages.cpp
+#, python-brace-format
+msgid "Partitioned manually, {disk}"
+msgstr "Ručně rozděleno, {disk}"
+
+#: src/pages.cpp
+msgid "No existing partition is erased."
+msgstr "Žádný stávající oddíl nebude smazán."
+
+#: src/pages.cpp
+#, python-brace-format
+msgid "Everything on {disk} will be erased. This cannot be undone."
+msgstr "Vše na disku {disk} bude smazáno. Tuto akci nelze vrátit."
+
+#: src/pages.cpp
+#, python-brace-format
+msgid "Every partition on {disk} will be deleted. This cannot be undone."
+msgstr "Všechny oddíly na disku {disk} budou odstraněny. Tuto akci nelze vrátit."
+
+#: src/pages.cpp
+#, python-brace-format
+msgid "Everything on {partitions} will be erased. This cannot be undone."
+msgstr "Vše na {partitions} bude smazáno. Tuto akci nelze vrátit."
+
+#: src/pages.cpp
+msgid "Installing Cutefish"
+msgstr "Instalace Cutefish"
+
+#: src/pages.cpp
+msgid "Keep the computer on until the installation is complete."
+msgstr "Nechte počítač zapnutý, dokud instalace neskončí."
+
+#: src/pages.cpp
+msgid "Preparing the disk…"
+msgstr "Příprava disku…"
+
+#: src/pages.cpp
+msgid "Copying the system…"
+msgstr "Kopírování systému…"
+
+#: src/pages.cpp
+msgid "Setting up your account and settings…"
+msgstr "Nastavení účtu a předvoleb…"
+
+#: src/pages.cpp
+msgid "Installing the boot loader…"
+msgstr "Instalace zavaděče…"
+
+#: src/pages.cpp
+msgid "Finishing…"
+msgstr "Dokončování…"
+
+#: src/pages.cpp
+msgid "Cutefish Is Installed"
+msgstr "Cutefish je nainstalován"
+
+#: src/pages.cpp
+msgid "Restart the computer and remove the installation medium to start using Cutefish."
+msgstr "Restartujte počítač a vyjměte instalační médium, abyste mohli začít používat Cutefish."
+
+#: src/pages.cpp
+msgid "The Installation Failed"
+msgstr "Instalace selhala"
+
+#: src/pages.cpp
+#, python-brace-format
+msgid "Cutefish could not be installed. The details are in {path}."
+msgstr "Cutefish nelze nainstalovat. Podrobnosti najdete v {path}."
+
+#. TRANSLATORS: What a partition is used for: nothing.
+#: src/partitionpage.cpp
+msgid "Not used"
+msgstr "Nepoužito"
+
+#. TRANSLATORS: What a partition is used for; {mount} is "/".
+#: src/partitionpage.cpp
+#, python-brace-format
+msgid "{mount} (system)"
+msgstr "{mount} (systém)"
+
+#. TRANSLATORS: What a partition is used for; {mount} is "/boot/efi".
+#: src/partitionpage.cpp
+#, python-brace-format
+msgid "{mount} (EFI system)"
+msgstr "{mount} (systém EFI)"
+
+#. TRANSLATORS: What a partition is used for: swap space.
+#: src/partitionpage.cpp
+msgid "Swap"
+msgstr "Odkládací prostor"
+
+#. TRANSLATORS: What a partition is used for: the boot loader on a computer without UEFI.
+#: src/partitionpage.cpp
+msgid "BIOS boot"
+msgstr "Zavádění BIOS"
+
+#. TRANSLATORS: Marks a partition that exists and will be formatted.
+#: src/partitionpage.cpp
+msgid "Format"
+msgstr "Formátovat"
+
+#: src/partitionpage.cpp
+msgid "Free space"
+msgstr "Volné místo"
+
+#: src/partitionpage.cpp
+msgid "New partition"
+msgstr "Nový oddíl"
+
+#: src/partitionpage.cpp
+msgid "Size"
+msgstr "Velikost"
+
+#: src/partitionpage.cpp
+msgid "Use as"
+msgstr "Použít jako"
+
+#: src/partitionpage.cpp
+msgid "File system"
+msgstr "Souborový systém"
+
+#: src/partitionpage.cpp
+msgid "Format this partition"
+msgstr "Formátovat tento oddíl"
+
+#: src/partitionpage.cpp
+msgid "Cancel"
+msgstr "Zrušit"
+
+#: src/partitionpage.cpp
+msgid "Add"
+msgstr "Přidat"
+
+#: src/partitionpage.cpp
+msgid "Save"
+msgstr "Uložit"
+
+#: src/partitionpage.cpp
+msgid "Partition the Disk"
+msgstr "Rozdělení disku"
+
+#: src/partitionpage.cpp
+msgid "New Partition Table"
+msgstr "Nová tabulka oddílů"
+
+#: src/partitionpage.cpp
+msgid "Add…"
+msgstr "Přidat…"
+
+#: src/partitionpage.cpp
+msgid "Edit…"
+msgstr "Upravit…"
+
+#: src/partitionpage.cpp
+msgid "Delete"
+msgstr "Smazat"
+
+#. TRANSLATORS: "Partition" is the header of the column of partition names.
+#: src/partitionpage.cpp
+msgid "Partition"
+msgstr "Oddíl"
+
+#: src/partitionpage.cpp
+#, python-brace-format
+msgid "Nothing changes on {disk} until you install."
+msgstr "Na disku {disk} se do instalace nic nezmění."
+
+#: src/partitionpage.cpp
+#, python-brace-format
+msgid "The partitions cannot be read: {error}"
+msgstr "Oddíly nelze načíst: {error}"
+
+#: src/partitionpage.cpp
+msgid "Create a new partition table?"
+msgstr "Vytvořit novou tabulku oddílů?"
+
+#: src/partitionpage.cpp
+#, python-brace-format
+msgid "Every partition on {disk} will be deleted when Cutefish is installed."
+msgstr "Při instalaci Cutefish budou všechny oddíly na disku {disk} odstraněny."
+
+#: src/partitionpage.cpp
+msgid "Add Partition"
+msgstr "Přidat oddíl"
+
+#: src/partitionpage.cpp
+msgid "New Partition"
+msgstr "Nový oddíl"
+
+#: data/cutefish-installer.desktop
+msgid "Install Cutefish on this computer"
+msgstr "Nainstalovat Cutefish do tohoto počítače"
+
+#: data/cutefish-installer.desktop
+msgid "Installer;Install;Setup;Disk;"
+msgstr "Instalátor;Instalace;Nastavení;Disk;Installer;Install;Setup;"

@@ -18,7 +18,7 @@ static std::string codeFor(std::string_view session)
 TEST(Languages, list)
 {
     const std::vector<InstallerLanguage>& languages = installerLanguages();
-    ASSERT_EQ(languages.size(), 11u);
+    ASSERT_EQ(languages.size(), 16u);
     EXPECT_EQ(languages.front().code, "en_US");
     EXPECT_EQ(languages.front().locale, "en_US.UTF-8");
     EXPECT_EQ(languages.front().name, "English");
@@ -38,6 +38,11 @@ TEST(Languages, list)
     EXPECT_EQ(named("ja_JP").name, "\u65e5\u672c\u8a9e");
     EXPECT_EQ(named("ko_KR").name, "\ud55c\uad6d\uc5b4");
     EXPECT_EQ(named("it_IT").name, "Italiano");
+    EXPECT_EQ(named("pl_PL").name, "Polski");
+    EXPECT_EQ(named("cs_CZ").name, "\u010ce\u0161tina");
+    EXPECT_EQ(named("id_ID").name, "Indonesia");
+    EXPECT_EQ(named("ms_MY").name, "Melayu");
+    EXPECT_EQ(named("vi_VN").name, "Ti\u1ebfng Vi\u1ec7t");
     EXPECT_EQ(named("zh_Hans_CN").name, "\u7b80\u4f53\u4e2d\u6587");
     EXPECT_EQ(named("zh_Hans_CN").locale, "zh_CN.UTF-8");
     EXPECT_EQ(named("zh_Hant_TW").name, "\u7e41\u9ad4\u4e2d\u6587");

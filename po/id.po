@@ -1,0 +1,461 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: cutefish-installer\n"
+"Report-Msgid-Bugs-To: https://github.com/cutefishos\n"
+"POT-Creation-Date: 2026-11-14 10:00+0800\n"
+"PO-Revision-Date: 2026-11-14 10:00+0800\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: id\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: common/partitioning.cpp
+msgid "The disk has no partition table. Create one first."
+msgstr "Disk tidak memiliki tabel partisi. Buat terlebih dahulu."
+
+#: common/partitioning.cpp
+msgid "A disk with an MBR partition table holds at most four partitions."
+msgstr "Disk dengan tabel partisi MBR dapat memuat paling banyak empat partisi."
+
+#: common/partitioning.cpp
+#, python-brace-format
+msgid "“{mount}” is not a mount point the system can use."
+msgstr "“{mount}” bukan titik kait yang dapat digunakan sistem."
+
+#: common/partitioning.cpp
+#, python-brace-format
+msgid "Two partitions are given “{mount}”."
+msgstr "Dua partisi diberi “{mount}”."
+
+#: common/partitioning.cpp
+msgid "Only a disk with a GPT partition table needs a BIOS boot partition."
+msgstr "Hanya disk dengan tabel partisi GPT yang memerlukan partisi boot BIOS."
+
+#: common/partitioning.cpp
+msgid "Only a new partition, or one made for it, can be the BIOS boot partition."
+msgstr "Hanya partisi baru, atau partisi yang dibuat untuknya, yang dapat menjadi partisi boot BIOS."
+
+#: common/partitioning.cpp
+#, python-brace-format
+msgid "The partition for “{mount}” must be formatted."
+msgstr "Partisi untuk “{mount}” harus diformat."
+
+#: common/partitioning.cpp
+#, python-brace-format
+msgid "“{type}” cannot be used for “{mount}”."
+msgstr "“{type}” tidak dapat digunakan untuk “{mount}”."
+
+#: common/partitioning.cpp
+#, python-brace-format
+msgid "The partition for “{mount}” holds no file system; format it to use it there."
+msgstr "Partisi untuk “{mount}” tidak berisi sistem file; format partisi itu untuk menggunakannya di sana."
+
+#: common/partitioning.cpp
+#, python-brace-format
+msgid "The partition for “{mount}” holds “{type}”; format it to use it there."
+msgstr "Partisi untuk “{mount}” berisi “{type}”; format partisi itu untuk menggunakannya di sana."
+
+#: common/partitioning.cpp
+#, python-brace-format
+msgid "Choose a partition for the system: give one the mount point “{mount}”."
+msgstr "Pilih partisi untuk sistem: beri salah satu partisi titik kait “{mount}”."
+
+#: common/partitioning.cpp
+#, python-brace-format
+msgid "The partition for “{mount}” needs at least {size} GB."
+msgstr "Partisi untuk “{mount}” memerlukan setidaknya {size} GB."
+
+#: common/partitioning.cpp
+#, python-brace-format
+msgid "Choose an EFI system partition: give one the mount point “{mount}”."
+msgstr "Pilih partisi sistem EFI: beri salah satu partisi titik kait “{mount}”."
+
+#: common/partitioning.cpp
+msgid "The EFI system partition needs at least 32 MB."
+msgstr "Partisi sistem EFI memerlukan setidaknya 32 MB."
+
+#: common/partitioning.cpp
+msgid "Add a 1 MB partition used as BIOS boot, for the boot loader."
+msgstr "Tambahkan partisi 1 MB sebagai boot BIOS, untuk boot loader."
+
+#: src/backend.cpp
+msgid "The installer service stopped unexpectedly."
+msgstr "Layanan penginstal berhenti secara tak terduga."
+
+#: src/backend.cpp
+msgid "The system bus cannot be reached."
+msgstr "Bus sistem tidak dapat dijangkau."
+
+#: src/backend.cpp
+msgid "The disks cannot be listed."
+msgstr "Daftar disk tidak dapat dimuat."
+
+#: src/backend.cpp
+msgid "The file systems cannot be listed."
+msgstr "Daftar sistem file tidak dapat dimuat."
+
+#: src/backend.cpp
+msgid "The partitions cannot be read."
+msgstr "Partisi tidak dapat dibaca."
+
+#: src/installerwindow.cpp data/cutefish-installer.desktop
+#: data/cutefish-installer-autostart.desktop
+msgid "Install Cutefish"
+msgstr "Instal Cutefish"
+
+#: src/installerwindow.cpp
+msgid "Continue"
+msgstr "Lanjutkan"
+
+#: src/installerwindow.cpp
+msgid "Back"
+msgstr "Kembali"
+
+#: src/installerwindow.cpp
+msgid "Try Cutefish"
+msgstr "Coba Cutefish"
+
+#. TRANSLATORS: A button: choose the partitions by hand instead of erasing the disk.
+#: src/installerwindow.cpp
+msgid "Partition Manually"
+msgstr "Partisi Manual"
+
+#: src/installerwindow.cpp
+msgid "Install"
+msgstr "Instal"
+
+#: src/installerwindow.cpp
+msgid "Erase Disk and Install"
+msgstr "Hapus Disk dan Instal"
+
+#. TRANSLATORS: After a successful installation: go on using the live system instead of restarting.
+#: src/installerwindow.cpp
+msgid "Keep Trying"
+msgstr "Tetap Mencoba"
+
+#: src/installerwindow.cpp
+msgid "Close"
+msgstr "Tutup"
+
+#: src/installerwindow.cpp
+msgid "Restart Now"
+msgstr "Mulai Ulang"
+
+#: src/installerwindow.cpp
+msgid "Try Again"
+msgstr "Coba Lagi"
+
+#: src/pages.cpp
+msgid "Choose Your Language"
+msgstr "Pilih Bahasa Anda"
+
+#: src/pages.cpp
+msgid "The installer and the installed system use this language."
+msgstr "Penginstal dan sistem yang terinstal menggunakan bahasa ini."
+
+#: src/pages.cpp
+msgid "Welcome to Cutefish"
+msgstr "Selamat Datang di Cutefish"
+
+#: src/pages.cpp
+msgid "Try Cutefish without changing your computer, or install it now."
+msgstr "Coba Cutefish tanpa mengubah komputer Anda, atau instal sekarang."
+
+#: src/pages.cpp
+msgid "Choose a Disk"
+msgstr "Pilih Disk"
+
+#: src/pages.cpp
+msgid "Cutefish uses the whole disk. Everything on it will be erased."
+msgstr "Cutefish menggunakan seluruh disk. Semua isinya akan dihapus."
+
+#. TRANSLATORS: Beside a disk; {size} is a size such as "12.0 GB".
+#: src/pages.cpp
+#, python-brace-format
+msgid "Too small, needs {size}"
+msgstr "Terlalu kecil, perlu {size}"
+
+#: src/pages.cpp
+msgid "No disk was found to install on."
+msgstr "Tidak ditemukan disk untuk instalasi."
+
+#: src/pages.cpp
+#, python-brace-format
+msgid "The disks cannot be listed: {error}"
+msgstr "Daftar disk tidak dapat dimuat: {error}"
+
+#: src/pages.cpp
+msgid "Create Your Account"
+msgstr "Buat Akun Anda"
+
+#: src/pages.cpp
+msgid "This account can change settings and install software."
+msgstr "Akun ini dapat mengubah pengaturan dan menginstal perangkat lunak."
+
+#: src/pages.cpp
+msgid "Full name"
+msgstr "Nama lengkap"
+
+#: src/pages.cpp
+msgid "User name"
+msgstr "Nama pengguna"
+
+#: src/pages.cpp
+msgid "Computer name"
+msgstr "Nama komputer"
+
+#: src/pages.cpp
+msgid "Password"
+msgstr "Kata sandi"
+
+#. TRANSLATORS: In the empty field where the password is typed a second time.
+#: src/pages.cpp
+msgid "Verify"
+msgstr "Ulangi"
+
+#. TRANSLATORS: In an empty field that must be filled in.
+#: src/pages.cpp
+msgid "Required"
+msgstr "Wajib"
+
+#: src/pages.cpp
+msgid "A user name starts with a lower-case letter and uses only a–z, 0–9, “-” and “_”."
+msgstr "Nama pengguna diawali huruf kecil dan hanya memakai a–z, 0–9, “-” dan “_”."
+
+#: src/pages.cpp
+#, python-brace-format
+msgid "“{name}” is taken by the system. Choose another user name."
+msgstr "“{name}” sudah dipakai sistem. Pilih nama pengguna lain."
+
+#: src/pages.cpp
+msgid "A computer name uses only letters, digits and hyphens, and does not start or end with a hyphen."
+msgstr "Nama komputer hanya memakai huruf, angka, dan tanda hubung, serta tidak diawali atau diakhiri tanda hubung."
+
+#: src/pages.cpp
+msgid "The passwords do not match."
+msgstr "Kata sandi tidak cocok."
+
+#: src/pages.cpp
+msgid "Choose Your Time Zone"
+msgstr "Pilih Zona Waktu Anda"
+
+#: src/pages.cpp
+msgid "The clock follows the time zone. You can change it later in Settings."
+msgstr "Jam mengikuti zona waktu. Anda dapat mengubahnya nanti di Pengaturan."
+
+#: src/pages.cpp
+msgid "Search for a city or country"
+msgstr "Cari kota atau negara"
+
+#. TRANSLATORS: Where the cities found would be listed, when the search finds none.
+#: src/pages.cpp
+msgid "No Results"
+msgstr "Tidak Ada Hasil"
+
+#: src/pages.cpp
+msgid "Ready to Install"
+msgstr "Siap Diinstal"
+
+#: src/pages.cpp
+msgid "Check your choices. Go back to change any of them."
+msgstr "Periksa pilihan Anda. Kembali untuk mengubahnya."
+
+#. TRANSLATORS: Under a disk's name; {disk} is its size, such as "512.1 GB".
+#: src/pages.cpp
+#, python-brace-format
+msgid "Partitioned manually, {disk}"
+msgstr "Dipartisi manual, {disk}"
+
+#: src/pages.cpp
+msgid "No existing partition is erased."
+msgstr "Tidak ada partisi yang ada yang dihapus."
+
+#: src/pages.cpp
+#, python-brace-format
+msgid "Everything on {disk} will be erased. This cannot be undone."
+msgstr "Semua isi {disk} akan dihapus. Tindakan ini tidak dapat dibatalkan."
+
+#: src/pages.cpp
+#, python-brace-format
+msgid "Every partition on {disk} will be deleted. This cannot be undone."
+msgstr "Semua partisi di {disk} akan dihapus. Tindakan ini tidak dapat dibatalkan."
+
+#: src/pages.cpp
+#, python-brace-format
+msgid "Everything on {partitions} will be erased. This cannot be undone."
+msgstr "Semua isi {partitions} akan dihapus. Tindakan ini tidak dapat dibatalkan."
+
+#: src/pages.cpp
+msgid "Installing Cutefish"
+msgstr "Menginstal Cutefish"
+
+#: src/pages.cpp
+msgid "Keep the computer on until the installation is complete."
+msgstr "Biarkan komputer tetap menyala hingga instalasi selesai."
+
+#: src/pages.cpp
+msgid "Preparing the disk…"
+msgstr "Menyiapkan disk…"
+
+#: src/pages.cpp
+msgid "Copying the system…"
+msgstr "Menyalin sistem…"
+
+#: src/pages.cpp
+msgid "Setting up your account and settings…"
+msgstr "Menyiapkan akun dan pengaturan Anda…"
+
+#: src/pages.cpp
+msgid "Installing the boot loader…"
+msgstr "Menginstal boot loader…"
+
+#: src/pages.cpp
+msgid "Finishing…"
+msgstr "Menyelesaikan…"
+
+#: src/pages.cpp
+msgid "Cutefish Is Installed"
+msgstr "Cutefish Telah Terinstal"
+
+#: src/pages.cpp
+msgid "Restart the computer and remove the installation medium to start using Cutefish."
+msgstr "Mulai ulang komputer dan lepaskan media instalasi untuk mulai menggunakan Cutefish."
+
+#: src/pages.cpp
+msgid "The Installation Failed"
+msgstr "Instalasi Gagal"
+
+#: src/pages.cpp
+#, python-brace-format
+msgid "Cutefish could not be installed. The details are in {path}."
+msgstr "Cutefish tidak dapat diinstal. Detailnya ada di {path}."
+
+#. TRANSLATORS: What a partition is used for: nothing.
+#: src/partitionpage.cpp
+msgid "Not used"
+msgstr "Tidak digunakan"
+
+#. TRANSLATORS: What a partition is used for; {mount} is "/".
+#: src/partitionpage.cpp
+#, python-brace-format
+msgid "{mount} (system)"
+msgstr "{mount} (sistem)"
+
+#. TRANSLATORS: What a partition is used for; {mount} is "/boot/efi".
+#: src/partitionpage.cpp
+#, python-brace-format
+msgid "{mount} (EFI system)"
+msgstr "{mount} (sistem EFI)"
+
+#. TRANSLATORS: What a partition is used for: swap space.
+#: src/partitionpage.cpp
+msgid "Swap"
+msgstr "Swap"
+
+#. TRANSLATORS: What a partition is used for: the boot loader on a computer without UEFI.
+#: src/partitionpage.cpp
+msgid "BIOS boot"
+msgstr "Boot BIOS"
+
+#. TRANSLATORS: Marks a partition that exists and will be formatted.
+#: src/partitionpage.cpp
+msgid "Format"
+msgstr "Format"
+
+#: src/partitionpage.cpp
+msgid "Free space"
+msgstr "Ruang kosong"
+
+#: src/partitionpage.cpp
+msgid "New partition"
+msgstr "Partisi baru"
+
+#: src/partitionpage.cpp
+msgid "Size"
+msgstr "Ukuran"
+
+#: src/partitionpage.cpp
+msgid "Use as"
+msgstr "Gunakan sebagai"
+
+#: src/partitionpage.cpp
+msgid "File system"
+msgstr "Sistem file"
+
+#: src/partitionpage.cpp
+msgid "Format this partition"
+msgstr "Format partisi ini"
+
+#: src/partitionpage.cpp
+msgid "Cancel"
+msgstr "Batal"
+
+#: src/partitionpage.cpp
+msgid "Add"
+msgstr "Tambah"
+
+#: src/partitionpage.cpp
+msgid "Save"
+msgstr "Simpan"
+
+#: src/partitionpage.cpp
+msgid "Partition the Disk"
+msgstr "Partisi Disk"
+
+#: src/partitionpage.cpp
+msgid "New Partition Table"
+msgstr "Tabel Partisi Baru"
+
+#: src/partitionpage.cpp
+msgid "Add…"
+msgstr "Tambah…"
+
+#: src/partitionpage.cpp
+msgid "Edit…"
+msgstr "Edit…"
+
+#: src/partitionpage.cpp
+msgid "Delete"
+msgstr "Hapus"
+
+#. TRANSLATORS: "Partition" is the header of the column of partition names.
+#: src/partitionpage.cpp
+msgid "Partition"
+msgstr "Partisi"
+
+#: src/partitionpage.cpp
+#, python-brace-format
+msgid "Nothing changes on {disk} until you install."
+msgstr "Tidak ada perubahan pada {disk} hingga Anda menginstal."
+
+#: src/partitionpage.cpp
+#, python-brace-format
+msgid "The partitions cannot be read: {error}"
+msgstr "Partisi tidak dapat dibaca: {error}"
+
+#: src/partitionpage.cpp
+msgid "Create a new partition table?"
+msgstr "Buat tabel partisi baru?"
+
+#: src/partitionpage.cpp
+#, python-brace-format
+msgid "Every partition on {disk} will be deleted when Cutefish is installed."
+msgstr "Semua partisi di {disk} akan dihapus saat Cutefish diinstal."
+
+#: src/partitionpage.cpp
+msgid "Add Partition"
+msgstr "Tambah Partisi"
+
+#: src/partitionpage.cpp
+msgid "New Partition"
+msgstr "Partisi Baru"
+
+#: data/cutefish-installer.desktop
+msgid "Install Cutefish on this computer"
+msgstr "Instal Cutefish di komputer ini"
+
+#: data/cutefish-installer.desktop
+msgid "Installer;Install;Setup;Disk;"
+msgstr "Installer;Install;Setup;Disk;Penginstal;Instal;Pasang;"

@@ -9,6 +9,7 @@
 
 #include <unicode/locdspnm.h>
 #include <unicode/locid.h>
+#include <unicode/uchar.h>
 
 #include <memory>
 
@@ -23,6 +24,11 @@ static std::string ownName(const char* id)
     icu::UnicodeString name;
     if (names)
         names->localeDisplayName(locale, name);
+    // CLDR leaves some languages, Polish among them, lower case in UI lists.
+    if (!name.isEmpty()) {
+        const UChar32 first = name.char32At(0);
+        name.replace(0, U16_LENGTH(first), icu::UnicodeString(u_totitle(first)));
+    }
     std::string utf8;
     name.toUTF8String(utf8);
     return utf8.empty() ? std::string(id) : utf8;
@@ -47,6 +53,11 @@ const std::vector<InstallerLanguage>& installerLanguages()
                 {"ja_JP", "ja_JP.UTF-8", "ja"},
                 {"ko_KR", "ko_KR.UTF-8", "ko"},
                 {"it_IT", "it_IT.UTF-8", "it"},
+                {"pl_PL", "pl_PL.UTF-8", "pl"},
+                {"cs_CZ", "cs_CZ.UTF-8", "cs"},
+                {"id_ID", "id_ID.UTF-8", "id"},
+                {"ms_MY", "ms_MY.UTF-8", "ms"},
+                {"vi_VN", "vi_VN.UTF-8", "vi"},
                 {"zh_Hans_CN", "zh_CN.UTF-8", "zh_Hans"},
                 {"zh_Hant_TW", "zh_TW.UTF-8", "zh_Hant"},
         };

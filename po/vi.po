@@ -1,0 +1,462 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: cutefish-installer\n"
+"Report-Msgid-Bugs-To: https://github.com/cutefishos\n"
+"POT-Creation-Date: 2026-11-14 10:00+0800\n"
+"PO-Revision-Date: 2026-11-14 10:00+0800\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: vi\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: common/partitioning.cpp
+msgid "The disk has no partition table. Create one first."
+msgstr "Ổ đĩa chưa có bảng phân vùng. Hãy tạo bảng phân vùng trước."
+
+#: common/partitioning.cpp
+msgid "A disk with an MBR partition table holds at most four partitions."
+msgstr "Ổ đĩa dùng bảng phân vùng MBR chỉ chứa tối đa bốn phân vùng."
+
+#: common/partitioning.cpp
+#, python-brace-format
+msgid "“{mount}” is not a mount point the system can use."
+msgstr "“{mount}” không phải là điểm gắn mà hệ thống có thể dùng."
+
+#: common/partitioning.cpp
+#, python-brace-format
+msgid "Two partitions are given “{mount}”."
+msgstr "Có hai phân vùng cùng được gán “{mount}”."
+
+#: common/partitioning.cpp
+msgid "Only a disk with a GPT partition table needs a BIOS boot partition."
+msgstr "Chỉ ổ đĩa dùng bảng phân vùng GPT mới cần phân vùng khởi động BIOS."
+
+#: common/partitioning.cpp
+msgid "Only a new partition, or one made for it, can be the BIOS boot partition."
+msgstr "Chỉ phân vùng mới, hoặc phân vùng được tạo riêng cho mục đích này, mới có thể làm phân vùng khởi động BIOS."
+
+#: common/partitioning.cpp
+#, python-brace-format
+msgid "The partition for “{mount}” must be formatted."
+msgstr "Phân vùng cho “{mount}” phải được định dạng."
+
+#: common/partitioning.cpp
+#, python-brace-format
+msgid "“{type}” cannot be used for “{mount}”."
+msgstr "Không thể dùng “{type}” cho “{mount}”."
+
+#: common/partitioning.cpp
+#, python-brace-format
+msgid "The partition for “{mount}” holds no file system; format it to use it there."
+msgstr "Phân vùng cho “{mount}” chưa có hệ thống tệp; hãy định dạng để dùng phân vùng này cho mục đích đó."
+
+#: common/partitioning.cpp
+#, python-brace-format
+msgid "The partition for “{mount}” holds “{type}”; format it to use it there."
+msgstr "Phân vùng cho “{mount}” đang chứa “{type}”; hãy định dạng để dùng phân vùng này cho mục đích đó."
+
+#: common/partitioning.cpp
+#, python-brace-format
+msgid "Choose a partition for the system: give one the mount point “{mount}”."
+msgstr "Hãy chọn một phân vùng cho hệ thống: gán điểm gắn “{mount}” cho một phân vùng."
+
+#: common/partitioning.cpp
+#, python-brace-format
+msgid "The partition for “{mount}” needs at least {size} GB."
+msgstr "Phân vùng cho “{mount}” cần ít nhất {size} GB."
+
+#: common/partitioning.cpp
+#, python-brace-format
+msgid "Choose an EFI system partition: give one the mount point “{mount}”."
+msgstr "Hãy chọn một phân vùng hệ thống EFI: gán điểm gắn “{mount}” cho một phân vùng."
+
+#: common/partitioning.cpp
+msgid "The EFI system partition needs at least 32 MB."
+msgstr "Phân vùng hệ thống EFI cần ít nhất 32 MB."
+
+#: common/partitioning.cpp
+msgid "Add a 1 MB partition used as BIOS boot, for the boot loader."
+msgstr "Hãy thêm một phân vùng 1 MB dùng làm phân vùng khởi động BIOS cho trình nạp khởi động."
+
+#: src/backend.cpp
+msgid "The installer service stopped unexpectedly."
+msgstr "Dịch vụ cài đặt đã dừng đột ngột."
+
+#: src/backend.cpp
+msgid "The system bus cannot be reached."
+msgstr "Không thể kết nối tới bus hệ thống."
+
+#: src/backend.cpp
+msgid "The disks cannot be listed."
+msgstr "Không thể liệt kê các ổ đĩa."
+
+#: src/backend.cpp
+msgid "The file systems cannot be listed."
+msgstr "Không thể liệt kê các hệ thống tệp."
+
+#: src/backend.cpp
+msgid "The partitions cannot be read."
+msgstr "Không thể đọc các phân vùng."
+
+#: src/installerwindow.cpp data/cutefish-installer.desktop
+#: data/cutefish-installer-autostart.desktop
+msgid "Install Cutefish"
+msgstr "Cài đặt Cutefish"
+
+#: src/installerwindow.cpp
+msgid "Continue"
+msgstr "Tiếp tục"
+
+#: src/installerwindow.cpp
+msgid "Back"
+msgstr "Quay lại"
+
+#: src/installerwindow.cpp
+msgid "Try Cutefish"
+msgstr "Dùng thử Cutefish"
+
+#. TRANSLATORS: A button: choose the partitions by hand instead of erasing the disk.
+#: src/installerwindow.cpp
+msgid "Partition Manually"
+msgstr "Phân vùng thủ công"
+
+#: src/installerwindow.cpp
+msgid "Install"
+msgstr "Cài đặt"
+
+#: src/installerwindow.cpp
+msgid "Erase Disk and Install"
+msgstr "Xóa ổ đĩa và cài đặt"
+
+#. TRANSLATORS: After a successful installation: go on using the live system instead of restarting.
+#: src/installerwindow.cpp
+msgid "Keep Trying"
+msgstr "Tiếp tục dùng thử"
+
+#: src/installerwindow.cpp
+msgid "Close"
+msgstr "Đóng"
+
+#: src/installerwindow.cpp
+msgid "Restart Now"
+msgstr "Khởi động lại ngay"
+
+#: src/installerwindow.cpp
+msgid "Try Again"
+msgstr "Thử lại"
+
+#: src/pages.cpp
+msgid "Choose Your Language"
+msgstr "Chọn ngôn ngữ"
+
+#: src/pages.cpp
+msgid "The installer and the installed system use this language."
+msgstr "Trình cài đặt và hệ thống sau khi cài sẽ dùng ngôn ngữ này."
+
+#: src/pages.cpp
+msgid "Welcome to Cutefish"
+msgstr "Chào mừng đến với Cutefish"
+
+#: src/pages.cpp
+msgid "Try Cutefish without changing your computer, or install it now."
+msgstr "Dùng thử Cutefish mà không thay đổi máy tính, hoặc cài đặt ngay bây giờ."
+
+#: src/pages.cpp
+msgid "Choose a Disk"
+msgstr "Chọn ổ đĩa"
+
+#: src/pages.cpp
+msgid "Cutefish uses the whole disk. Everything on it will be erased."
+msgstr "Cutefish sẽ dùng toàn bộ ổ đĩa. Mọi dữ liệu trên đó sẽ bị xóa."
+
+#. TRANSLATORS: Beside a disk; {size} is a size such as "12.0 GB".
+#: src/pages.cpp
+#, python-brace-format
+msgid "Too small, needs {size}"
+msgstr "Quá nhỏ, cần {size}"
+
+#: src/pages.cpp
+msgid "No disk was found to install on."
+msgstr "Không tìm thấy ổ đĩa nào để cài đặt."
+
+#: src/pages.cpp
+#, python-brace-format
+msgid "The disks cannot be listed: {error}"
+msgstr "Không thể liệt kê các ổ đĩa: {error}"
+
+#: src/pages.cpp
+msgid "Create Your Account"
+msgstr "Tạo tài khoản"
+
+#: src/pages.cpp
+msgid "This account can change settings and install software."
+msgstr "Tài khoản này có thể thay đổi cài đặt và cài đặt phần mềm."
+
+#: src/pages.cpp
+msgid "Full name"
+msgstr "Họ và tên"
+
+#: src/pages.cpp
+msgid "User name"
+msgstr "Tên người dùng"
+
+#: src/pages.cpp
+msgid "Computer name"
+msgstr "Tên máy tính"
+
+#: src/pages.cpp
+msgid "Password"
+msgstr "Mật khẩu"
+
+#. TRANSLATORS: In the empty field where the password is typed a second time.
+#: src/pages.cpp
+msgid "Verify"
+msgstr "Nhập lại"
+
+#. TRANSLATORS: In an empty field that must be filled in.
+#: src/pages.cpp
+msgid "Required"
+msgstr "Bắt buộc"
+
+#: src/pages.cpp
+msgid "A user name starts with a lower-case letter and uses only a–z, 0–9, “-” and “_”."
+msgstr "Tên người dùng bắt đầu bằng một chữ cái viết thường và chỉ dùng a–z, 0–9, “-” và “_”."
+
+#: src/pages.cpp
+#, python-brace-format
+msgid "“{name}” is taken by the system. Choose another user name."
+msgstr "“{name}” đã được hệ thống sử dụng. Hãy chọn tên người dùng khác."
+
+#: src/pages.cpp
+msgid "A computer name uses only letters, digits and hyphens, and does not start or end with a hyphen."
+msgstr "Tên máy tính chỉ gồm chữ cái, chữ số và dấu gạch nối, và không bắt đầu hay kết thúc bằng dấu gạch nối."
+
+#: src/pages.cpp
+msgid "The passwords do not match."
+msgstr "Mật khẩu không khớp."
+
+#: src/pages.cpp
+msgid "Choose Your Time Zone"
+msgstr "Chọn múi giờ"
+
+#: src/pages.cpp
+msgid "The clock follows the time zone. You can change it later in Settings."
+msgstr "Đồng hồ chạy theo múi giờ. Bạn có thể thay đổi sau trong Cài đặt."
+
+#: src/pages.cpp
+msgid "Search for a city or country"
+msgstr "Tìm thành phố hoặc quốc gia"
+
+#. TRANSLATORS: Where the cities found would be listed, when the search finds none.
+#: src/pages.cpp
+msgid "No Results"
+msgstr "Không có kết quả"
+
+#: src/pages.cpp
+msgid "Ready to Install"
+msgstr "Sẵn sàng cài đặt"
+
+#: src/pages.cpp
+msgid "Check your choices. Go back to change any of them."
+msgstr "Hãy kiểm tra các lựa chọn. Quay lại nếu muốn thay đổi."
+
+#. TRANSLATORS: Under a disk's name; {disk} is its size, such as "512.1 GB".
+#: src/pages.cpp
+#, python-brace-format
+msgid "Partitioned manually, {disk}"
+msgstr "Phân vùng thủ công, {disk}"
+
+#: src/pages.cpp
+msgid "No existing partition is erased."
+msgstr "Không phân vùng hiện có nào bị xóa."
+
+#: src/pages.cpp
+#, python-brace-format
+msgid "Everything on {disk} will be erased. This cannot be undone."
+msgstr "Mọi dữ liệu trên {disk} sẽ bị xóa. Không thể hoàn tác thao tác này."
+
+#: src/pages.cpp
+#, python-brace-format
+msgid "Every partition on {disk} will be deleted. This cannot be undone."
+msgstr "Mọi phân vùng trên {disk} sẽ bị xóa. Không thể hoàn tác thao tác này."
+
+#: src/pages.cpp
+#, python-brace-format
+msgid "Everything on {partitions} will be erased. This cannot be undone."
+msgstr "Mọi dữ liệu trên {partitions} sẽ bị xóa. Không thể hoàn tác thao tác này."
+
+#: src/pages.cpp
+msgid "Installing Cutefish"
+msgstr "Đang cài đặt Cutefish"
+
+#: src/pages.cpp
+msgid "Keep the computer on until the installation is complete."
+msgstr "Hãy để máy tính bật cho đến khi cài đặt xong."
+
+#: src/pages.cpp
+msgid "Preparing the disk…"
+msgstr "Đang chuẩn bị ổ đĩa…"
+
+#: src/pages.cpp
+msgid "Copying the system…"
+msgstr "Đang sao chép hệ thống…"
+
+#: src/pages.cpp
+msgid "Setting up your account and settings…"
+msgstr "Đang thiết lập tài khoản và cài đặt…"
+
+#: src/pages.cpp
+msgid "Installing the boot loader…"
+msgstr "Đang cài đặt trình nạp khởi động…"
+
+#: src/pages.cpp
+msgid "Finishing…"
+msgstr "Đang hoàn tất…"
+
+#: src/pages.cpp
+msgid "Cutefish Is Installed"
+msgstr "Đã cài đặt Cutefish"
+
+#: src/pages.cpp
+msgid "Restart the computer and remove the installation medium to start using Cutefish."
+msgstr "Hãy khởi động lại máy tính và tháo phương tiện cài đặt để bắt đầu dùng Cutefish."
+
+#: src/pages.cpp
+msgid "The Installation Failed"
+msgstr "Cài đặt không thành công"
+
+#: src/pages.cpp
+#, python-brace-format
+msgid "Cutefish could not be installed. The details are in {path}."
+msgstr "Không thể cài đặt Cutefish. Chi tiết có trong {path}."
+
+#. TRANSLATORS: What a partition is used for: nothing.
+#: src/partitionpage.cpp
+msgid "Not used"
+msgstr "Không dùng"
+
+#. TRANSLATORS: What a partition is used for; {mount} is "/".
+#: src/partitionpage.cpp
+#, python-brace-format
+msgid "{mount} (system)"
+msgstr "{mount} (hệ thống)"
+
+#. TRANSLATORS: What a partition is used for; {mount} is "/boot/efi".
+#: src/partitionpage.cpp
+#, python-brace-format
+msgid "{mount} (EFI system)"
+msgstr "{mount} (hệ thống EFI)"
+
+#. TRANSLATORS: What a partition is used for: swap space.
+#: src/partitionpage.cpp
+msgid "Swap"
+msgstr "Swap"
+
+#. TRANSLATORS: What a partition is used for: the boot loader on a computer without UEFI.
+#: src/partitionpage.cpp
+msgid "BIOS boot"
+msgstr "Khởi động BIOS"
+
+#. TRANSLATORS: Marks a partition that exists and will be formatted.
+#: src/partitionpage.cpp
+msgid "Format"
+msgstr "Định dạng"
+
+#: src/partitionpage.cpp
+msgid "Free space"
+msgstr "Dung lượng trống"
+
+#: src/partitionpage.cpp
+msgid "New partition"
+msgstr "Phân vùng mới"
+
+#: src/partitionpage.cpp
+msgid "Size"
+msgstr "Kích thước"
+
+#: src/partitionpage.cpp
+msgid "Use as"
+msgstr "Dùng làm"
+
+#: src/partitionpage.cpp
+msgid "File system"
+msgstr "Hệ thống tệp"
+
+#: src/partitionpage.cpp
+msgid "Format this partition"
+msgstr "Định dạng phân vùng này"
+
+#: src/partitionpage.cpp
+msgid "Cancel"
+msgstr "Hủy"
+
+#: src/partitionpage.cpp
+msgid "Add"
+msgstr "Thêm"
+
+#: src/partitionpage.cpp
+msgid "Save"
+msgstr "Lưu"
+
+#: src/partitionpage.cpp
+msgid "Partition the Disk"
+msgstr "Phân vùng ổ đĩa"
+
+#: src/partitionpage.cpp
+msgid "New Partition Table"
+msgstr "Bảng phân vùng mới"
+
+#: src/partitionpage.cpp
+msgid "Add…"
+msgstr "Thêm…"
+
+#: src/partitionpage.cpp
+msgid "Edit…"
+msgstr "Sửa…"
+
+#: src/partitionpage.cpp
+msgid "Delete"
+msgstr "Xóa"
+
+#. TRANSLATORS: "Partition" is the header of the column of partition names.
+#: src/partitionpage.cpp
+msgid "Partition"
+msgstr "Phân vùng"
+
+#: src/partitionpage.cpp
+#, python-brace-format
+msgid "Nothing changes on {disk} until you install."
+msgstr "Không có gì thay đổi trên {disk} cho đến khi bạn cài đặt."
+
+#: src/partitionpage.cpp
+#, python-brace-format
+msgid "The partitions cannot be read: {error}"
+msgstr "Không thể đọc các phân vùng: {error}"
+
+#: src/partitionpage.cpp
+msgid "Create a new partition table?"
+msgstr "Tạo bảng phân vùng mới?"
+
+#: src/partitionpage.cpp
+#, python-brace-format
+msgid "Every partition on {disk} will be deleted when Cutefish is installed."
+msgstr "Mọi phân vùng trên {disk} sẽ bị xóa khi cài đặt Cutefish."
+
+#: src/partitionpage.cpp
+msgid "Add Partition"
+msgstr "Thêm phân vùng"
+
+#: src/partitionpage.cpp
+msgid "New Partition"
+msgstr "Phân vùng mới"
+
+#: data/cutefish-installer.desktop
+msgid "Install Cutefish on this computer"
+msgstr "Cài đặt Cutefish trên máy tính này"
+
+#: data/cutefish-installer.desktop
+msgid "Installer;Install;Setup;Disk;"
+msgstr "Trình cài đặt;Cài đặt;Thiết lập;Ổ đĩa;Installer;Install;Setup;Disk;"

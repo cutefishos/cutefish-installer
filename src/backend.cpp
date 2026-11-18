@@ -7,13 +7,17 @@
 
 #include <chrono>
 #include <optional>
+#include <utility>
 
 namespace dbus = cutefish::base::dbus;
 using cutefish::i18n::tr;
 
-Backend::Backend(dbus::Connection* systemBus)
+Backend::Backend(dbus::Connection* systemBus, dbus::Connection* sessionBus)
     : m_bus(systemBus)
 {
+    if (sessionBus)
+        m_screenSaver = std::make_unique<dbus::Proxy>(sessionBus, "org.freedesktop.ScreenSaver", "/ScreenSaver",
+                                                      "org.freedesktop.ScreenSaver");
     if (!m_bus)
         return;
     m_proxy = std::make_unique<dbus::Proxy>(m_bus, installer::kService, installer::kPath, installer::kInterface);
@@ -113,6 +117,7 @@ void Backend::install(const installer::Options& options, std::function<void(std:
             "Install",
             [this, done](const dbus::Reply& reply) {
                 if (!reply.isError()) {
+                    keepDisplayOn(true);
                     done({});
                     return;
                 }
@@ -125,6 +130,33 @@ void Backend::install(const installer::Options& options, std::function<void(std:
 void Backend::finish(bool success, const std::string& error)
 {
     m_running = false;
+    keepDisplayOn(false);
     if (onFinished)
         onFinished(success, error);
+}
+
+void Backend::keepDisplayOn(bool on)
+{
+    if (!m_screenSaver)
+        return;
+    if (!on) {
+        if (m_screenSaverCookie)
+            m_screenSaver->send("UnInhibit", std::exchange(m_screenSaverCookie, 0u));
+        return;
+    }
+    if (m_screenSaverCookie || !m_screenSaverCall.isNull())
+        return;
+    m_screenSaverCall = m_screenSaver->callAsync(
+            "Inhibit",
+            [this](const dbus::Reply& reply) {
+                dbus::PendingCall done = std::move(m_screenSaverCall);
+                const std::optional<uint32_t> cookie = reply.value<uint32_t>();
+                if (!cookie)
+                    return;
+                if (m_running)
+                    m_screenSaverCookie = *cookie;
+                else
+                    m_screenSaver->send("UnInhibit", *cookie);
+            },
+            std::string("cutefish-installer"), std::string("Installing the system"));
 }

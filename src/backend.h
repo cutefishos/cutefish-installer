@@ -22,11 +22,13 @@ struct DiskInfo
     bool removable = false;
 };
 
-// The installer service on the system bus, which does the work as root.
+// The installer service on the system bus, which does the work as root. While
+// it installs, the display stays on through the session's screen saver.
 class Backend
 {
 public:
-    explicit Backend(cutefish::base::dbus::Connection* systemBus);
+    explicit Backend(cutefish::base::dbus::Connection* systemBus,
+                     cutefish::base::dbus::Connection* sessionBus = nullptr);
     ~Backend();
 
     // The disks, or the error that kept them back.
@@ -46,6 +48,7 @@ public:
 
 private:
     void finish(bool success, const std::string& error);
+    void keepDisplayOn(bool on);
 
     cutefish::base::dbus::Connection* m_bus;
     std::unique_ptr<cutefish::base::dbus::Proxy> m_proxy;
@@ -57,5 +60,8 @@ private:
     cutefish::base::dbus::Match m_finished;
     cutefish::base::dbus::NameWatch m_owner;
     std::string m_ownerName;
+    std::unique_ptr<cutefish::base::dbus::Proxy> m_screenSaver;
+    cutefish::base::dbus::PendingCall m_screenSaverCall;
+    uint32_t m_screenSaverCookie = 0;
     bool m_running = false;
 };

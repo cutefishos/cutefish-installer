@@ -5,6 +5,7 @@
 
 #include "disks.h"
 #include "installjob.h"
+#include "keepawake.h"
 
 #include "base/dbus.h"
 #include "base/timer.h"
@@ -51,6 +52,7 @@ private:
     cutefish::base::Timer m_idleTimer;
     cutefish::base::dbus::Connection* m_bus = nullptr;
     std::unique_ptr<cutefish::base::dbus::Object> m_object;
+    std::unique_ptr<KeepAwake> m_keepAwake;
     cutefish::base::dbus::PendingCall m_authorization;
     bool m_authorizing = false;
     bool m_running = false;

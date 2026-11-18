@@ -62,6 +62,7 @@ InstallerService::~InstallerService()
 bool InstallerService::exportTo(dbus::Connection* bus)
 {
     m_bus = bus;
+    m_keepAwake = std::make_unique<KeepAwake>(bus);
     m_object = std::make_unique<dbus::Object>(bus, installer::kPath, installer::kInterface);
     m_object->addMethod(
             "GetDisks",
@@ -229,6 +230,7 @@ void InstallerService::start(const installer::Options& options)
         return;
     }
     m_running = true;
+    m_keepAwake->hold();
     m_object->emitPropertiesChanged({"Running"});
     if (m_thread.joinable())
         m_thread.join();
@@ -249,6 +251,7 @@ void InstallerService::finished(const std::string& error)
     if (m_thread.joinable())
         m_thread.join();
     m_running = false;
+    m_keepAwake->release();
     if (!error.empty())
         CF_WARNING(kLog) << "cutefish-installer: installation failed:" << error;
     m_object->emitPropertiesChanged({"Running"});

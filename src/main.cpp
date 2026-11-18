@@ -42,7 +42,7 @@ int main(int argc, char** argv)
         return 0;
     }
 
-    Backend backend(base::dbus::Connection::system());
+    Backend backend(base::dbus::Connection::system(), bus);
     InstallerWindow window(backend);
 
     std::unique_ptr<base::dbus::Object> service;

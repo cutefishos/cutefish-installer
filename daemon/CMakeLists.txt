@@ -5,6 +5,8 @@ add_library(installer-service STATIC
     installerservice.h
     installjob.cpp
     installjob.h
+    keepawake.cpp
+    keepawake.h
     layout.cpp
     layout.h
     plan.cpp

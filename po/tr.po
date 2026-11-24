@@ -1,0 +1,462 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: cutefish-installer\n"
+"Report-Msgid-Bugs-To: https://github.com\n"
+"POT-Creation-Date: 2026-11-14 10:00+0800\n"
+"PO-Revision-Date: 2026-11-25 02:27+0300\n"
+"Last-Translator: Cumhur Karadeniz\n"
+"Language-Team: Turkish\n"
+"Language: tr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: common/partitioning.cpp
+msgid "The disk has no partition table. Create one first."
+msgstr "Diskte bölümleme tablosu yok. Önce bir tane oluşturun."
+
+#: common/partitioning.cpp
+msgid "A disk with an MBR partition table holds at most four partitions."
+msgstr "MBR bölümleme tablosuna sahip bir disk en fazla dört bölüm barındırabilir."
+
+#: common/partitioning.cpp
+#, python-brace-format
+msgid "“{mount}” is not a mount point the system can use."
+msgstr "“{mount}” sistemin kullanabileceği bir bağlama noktası değil."
+
+#: common/partitioning.cpp
+#, python-brace-format
+msgid "Two partitions are given “{mount}”."
+msgstr "İki bölüme birden “{mount}” bağlama noktası atanmış."
+
+#: common/partitioning.cpp
+msgid "Only a disk with a GPT partition table needs a BIOS boot partition."
+msgstr "Yalnızca GPT bölümleme tablosuna sahip bir disk BIOS önyükleme bölümüne ihtiyaç duyar."
+
+#: common/partitioning.cpp
+msgid "Only a new partition, or one made for it, can be the BIOS boot partition."
+msgstr "Yalnızca yeni bir bölüm veya bunun için oluşturulmuş bir bölüm BIOS önyükleme bölümü olabilir."
+
+#: common/partitioning.cpp
+#, python-brace-format
+msgid "The partition for “{mount}” must be formatted."
+msgstr "“{mount}” için seçilen bölüm biçimlendirilmelidir."
+
+#: common/partitioning.cpp
+#, python-brace-format
+msgid "“{type}” cannot be used for “{mount}”."
+msgstr "“{mount}” için “{type}” kullanılamaz."
+
+#: common/partitioning.cpp
+#, python-brace-format
+msgid "The partition for “{mount}” holds no file system; format it to use it there."
+msgstr "“{mount}” için seçilen bölümde dosya sistemi yok; burada kullanmak için biçimlendirin."
+
+#: common/partitioning.cpp
+#, python-brace-format
+msgid "The partition for “{mount}” holds “{type}”; format it to use it there."
+msgstr "“{mount}” için seçilen bölüm “{type}” içeriyor; burada kullanmak için biçimlendirin."
+
+#: common/partitioning.cpp
+#, python-brace-format
+msgid "Choose a partition for the system: give one the mount point “{mount}”."
+msgstr "Sistem için bir bölüm seçin: birine “{mount}” bağlama noktasını atayın."
+
+#: common/partitioning.cpp
+#, python-brace-format
+msgid "The partition for “{mount}” needs at least {size} GB."
+msgstr "“{mount}” bölümü için en az {size} GB alan gerekir."
+
+#: common/partitioning.cpp
+#, python-brace-format
+msgid "Choose an EFI system partition: give one the mount point “{mount}”."
+msgstr "Bir EFI sistem bölümü seçin: birine “{mount}” bağlama noktasını atayın."
+
+#: common/partitioning.cpp
+msgid "The EFI system partition needs at least 32 MB."
+msgstr "EFI sistem bölümü için en az 32 MB alan gerekir."
+
+#: common/partitioning.cpp
+msgid "Add a 1 MB partition used as BIOS boot, for the boot loader."
+msgstr "Önyükleyici için BIOS önyükleme bölümü olarak kullanılacak 1 MB boyutunda bir bölüm ekleyin."
+
+#: src/backend.cpp
+msgid "The installer service stopped unexpectedly."
+msgstr "Kurulum hizmeti beklenmedik şekilde durdu."
+
+#: src/backend.cpp
+msgid "The system bus cannot be reached."
+msgstr "Sistem veri yoluna (D-Bus) ulaşılamıyor."
+
+#: src/backend.cpp
+msgid "The disks cannot be listed."
+msgstr "Diskler listelenemiyor."
+
+#: src/backend.cpp
+msgid "The file systems cannot be listed."
+msgstr "Dosya sistemleri listelenemiyor."
+
+#: src/backend.cpp
+msgid "The partitions cannot be read."
+msgstr "Bölümler okunamıyor."
+
+#: src/installerwindow.cpp data/cutefish-installer.desktop
+#: data/cutefish-installer-autostart.desktop
+msgid "Install Cutefish"
+msgstr "Cutefish'i Kur"
+
+#: src/installerwindow.cpp
+msgid "Continue"
+msgstr "Devam Et"
+
+#: src/installerwindow.cpp
+msgid "Back"
+msgstr "Geri"
+
+#: src/installerwindow.cpp
+msgid "Try Cutefish"
+msgstr "Cutefish'i Dene"
+
+#. TRANSLATORS: A button: choose the partitions by hand instead of erasing the disk.
+#: src/installerwindow.cpp
+msgid "Partition Manually"
+msgstr "Elle Bölümle"
+
+#: src/installerwindow.cpp
+msgid "Install"
+msgstr "Kur"
+
+#: src/installerwindow.cpp
+msgid "Erase Disk and Install"
+msgstr "Diski Sil ve Kur"
+
+#. TRANSLATORS: After a successful installation: go on using the live system instead of restarting.
+#: src/installerwindow.cpp
+msgid "Keep Trying"
+msgstr "Denemeye Devam Et"
+
+#: src/installerwindow.cpp
+msgid "Close"
+msgstr "Kapat"
+
+#: src/installerwindow.cpp
+msgid "Restart Now"
+msgstr "Şimdi Yeniden Başlat"
+
+#: src/installerwindow.cpp
+msgid "Try Again"
+msgstr "Tekrar Dene"
+
+#: src/pages.cpp
+msgid "Choose Your Language"
+msgstr "Dilinizi Seçin"
+
+#: src/pages.cpp
+msgid "The installer and the installed system use this language."
+msgstr "Kurulum yardımcısı ve kurulan sistem bu dili kullanır."
+
+#: src/pages.cpp
+msgid "Welcome to Cutefish"
+msgstr "Cutefish'e Hoş Geldiniz"
+
+#: src/pages.cpp
+msgid "Try Cutefish without changing your computer, or install it now."
+msgstr "Bilgisayarınızda değişiklik yapmadan Cutefish'i deneyin veya şimdi kurun."
+
+#: src/pages.cpp
+msgid "Choose a Disk"
+msgstr "Bir Disk Seçin"
+
+#: src/pages.cpp
+msgid "Cutefish uses the whole disk. Everything on it will be erased."
+msgstr "Cutefish diskin tamamını kullanır. Üzerindeki her şey silinecektir."
+
+#. TRANSLATORS: Beside a disk; {size} is a size such as "12.0 GB".
+#: src/pages.cpp
+#, python-brace-format
+msgid "Too small, needs {size}"
+msgstr "Çok küçük, en az {size} gerekir"
+
+#: src/pages.cpp
+msgid "No disk was found to install on."
+msgstr "Kurulum yapılacak disk bulunamadı."
+
+#: src/pages.cpp
+#, python-brace-format
+msgid "The disks cannot be listed: {error}"
+msgstr "Diskler listelenemiyor: {error}"
+
+#: src/pages.cpp
+msgid "Create Your Account"
+msgstr "Hesabınızı Oluşturun"
+
+#: src/pages.cpp
+msgid "This account can change settings and install software."
+msgstr "Bu hesap ayarları değiştirebilir ve yazılım kurabilir."
+
+#: src/pages.cpp
+msgid "Full name"
+msgstr "Tam ad"
+
+#: src/pages.cpp
+msgid "User name"
+msgstr "Kullanıcı adı"
+
+#: src/pages.cpp
+msgid "Computer name"
+msgstr "Bilgisayar adı"
+
+#: src/pages.cpp
+msgid "Password"
+msgstr "Parola"
+
+#. TRANSLATORS: In the empty field where the password is typed a second time.
+#: src/pages.cpp
+msgid "Verify"
+msgstr "Doğrula"
+
+#. TRANSLATORS: In an empty field that must be filled in.
+#: src/pages.cpp
+msgid "Required"
+msgstr "Gerekli"
+
+#: src/pages.cpp
+msgid "A user name starts with a lower-case letter and uses only a–z, 0–9, “-” and “_”."
+msgstr "Kullanıcı adı küçük harfle başlar ve yalnızca a–z, 0–9, “-” ve “_” karakterlerini kullanır."
+
+#: src/pages.cpp
+#, python-brace-format
+msgid "“{name}” is taken by the system. Choose another user name."
+msgstr "“{name}” sistem tarafından kullanılıyor. Başka bir kullanıcı adı seçin."
+
+#: src/pages.cpp
+msgid "A computer name uses only letters, digits and hyphens, and does not start or end with a hyphen."
+msgstr "Bilgisayar adı yalnızca harf, rakam ve tire içerir; tire ile başlamaz veya bitmez."
+
+#: src/pages.cpp
+msgid "The passwords do not match."
+msgstr "Parolalar eşleşmiyor."
+
+#: src/pages.cpp
+msgid "Choose Your Time Zone"
+msgstr "Saat Diliminizi Seçin"
+
+#: src/pages.cpp
+msgid "The clock follows the time zone. You can change it later in Settings."
+msgstr "Saat, seçilen saat dilimine göre ayarlanır. Bunu daha sonra Ayarlar'dan değiştirebilirsiniz."
+
+#: src/pages.cpp
+msgid "Search for a city or country"
+msgstr "Bir şehir veya ülke arayın"
+
+#. TRANSLATORS: Where the cities found would be listed, when the search finds none.
+#: src/pages.cpp
+msgid "No Results"
+msgstr "Sonuç Yok"
+
+#: src/pages.cpp
+msgid "Ready to Install"
+msgstr "Kuruluma Hazır"
+
+#: src/pages.cpp
+msgid "Check your choices. Go back to change any of them."
+msgstr "Seçimlerinizi gözden geçirin. Herhangi birini değiştirmek için geri gidin."
+
+#. TRANSLATORS: Under a disk's name; {disk} is its size, such as "512.1 GB".
+#: src/pages.cpp
+#, python-brace-format
+msgid "Partitioned manually, {disk}"
+msgstr "Elle bölümlendirildi, {disk}"
+
+#: src/pages.cpp
+msgid "No existing partition is erased."
+msgstr "Mevcut hiçbir bölüm silinmez."
+
+#: src/pages.cpp
+#, python-brace-format
+msgid "Everything on {disk} will be erased. This cannot be undone."
+msgstr "{disk} üzerindeki her şey silinecektir. Bu işlem geri alınamaz."
+
+#: src/pages.cpp
+#, python-brace-format
+msgid "Every partition on {disk} will be deleted. This cannot be undone."
+msgstr "{disk} üzerindeki tüm bölümler silinecektir. Bu işlem geri alınamaz."
+
+#: src/pages.cpp
+#, python-brace-format
+msgid "Everything on {partitions} will be erased. This cannot be undone."
+msgstr "{partitions} üzerindeki her şey silinecektir. Bu işlem geri alınamaz."
+
+#: src/pages.cpp
+msgid "Installing Cutefish"
+msgstr "Cutefish Kuruluyor"
+
+#: src/pages.cpp
+msgid "Keep the computer on until the installation is complete."
+msgstr "Kurulum tamamlanana kadar bilgisayarı açık tutun."
+
+#: src/pages.cpp
+msgid "Preparing the disk…"
+msgstr "Disk hazırlanıyor…"
+
+#: src/pages.cpp
+msgid "Copying the system…"
+msgstr "Sistem kopyalanıyor…"
+
+#: src/pages.cpp
+msgid "Setting up your account and settings…"
+msgstr "Hesabınız ve ayarlarınız yapılandırılıyor…"
+
+#: src/pages.cpp
+msgid "Installing the boot loader…"
+msgstr "Önyükleyici kuruluyor…"
+
+#: src/pages.cpp
+msgid "Finishing…"
+msgstr "Tamamlanıyor…"
+
+#: src/pages.cpp
+msgid "Cutefish Is Installed"
+msgstr "Cutefish Kuruldu"
+
+#: src/pages.cpp
+msgid "Restart the computer and remove the installation medium to start using Cutefish."
+msgstr "Cutefish'i kullanmaya başlamak için bilgisayarı yeniden başlatın ve kurulum ortamını çıkarın."
+
+#: src/pages.cpp
+msgid "The Installation Failed"
+msgstr "Kurulum Başarısız Oldu"
+
+#: src/pages.cpp
+#, python-brace-format
+msgid "Cutefish could not be installed. The details are in {path}."
+msgstr "Cutefish kurulamadı. Ayrıntılar {path} konumundadır."
+
+#. TRANSLATORS: What a partition is used for: nothing.
+#: src/partitionpage.cpp
+msgid "Not used"
+msgstr "Kullanılmıyor"
+
+#. TRANSLATORS: What a partition is used for; {mount} is "/".
+#: src/partitionpage.cpp
+#, python-brace-format
+msgid "{mount} (system)"
+msgstr "{mount} (sistem)"
+
+#. TRANSLATORS: What a partition is used for; {mount} is "/boot/efi".
+#: src/partitionpage.cpp
+#, python-brace-format
+msgid "{mount} (EFI system)"
+msgstr "{mount} (EFI sistemi)"
+
+#. TRANSLATORS: What a partition is used for: swap space.
+#: src/partitionpage.cpp
+msgid "Swap"
+msgstr "Takas Alanı"
+
+#. TRANSLATORS: What a partition is used for: the boot loader on a computer without UEFI.
+#: src/partitionpage.cpp
+msgid "BIOS boot"
+msgstr "BIOS önyükleme"
+
+#. TRANSLATORS: Marks a partition that exists and will be formatted.
+#: src/partitionpage.cpp
+msgid "Format"
+msgstr "Biçimlendir"
+
+#: src/partitionpage.cpp
+msgid "Free space"
+msgstr "Boş alan"
+
+#: src/partitionpage.cpp
+msgid "New partition"
+msgstr "Yeni bölüm"
+
+#: src/partitionpage.cpp
+msgid "Size"
+msgstr "Boyut"
+
+#: src/partitionpage.cpp
+msgid "Use as"
+msgstr "Kullanım amacı"
+
+#: src/partitionpage.cpp
+msgid "File system"
+msgstr "Dosya sistemi"
+
+#: src/partitionpage.cpp
+msgid "Format this partition"
+msgstr "Bu bölümü biçimlendir"
+
+#: src/partitionpage.cpp
+msgid "Cancel"
+msgstr "İptal"
+
+#: src/partitionpage.cpp
+msgid "Add"
+msgstr "Ekle"
+
+#: src/partitionpage.cpp
+msgid "Save"
+msgstr "Kaydet"
+
+#: src/partitionpage.cpp
+msgid "Partition the Disk"
+msgstr "Diski Bölümle"
+
+#: src/partitionpage.cpp
+msgid "New Partition Table"
+msgstr "Yeni Bölümleme Tablosu"
+
+#: src/partitionpage.cpp
+msgid "Add…"
+msgstr "Ekle…"
+
+#: src/partitionpage.cpp
+msgid "Edit…"
+msgstr "Düzenle…"
+
+#: src/partitionpage.cpp
+msgid "Delete"
+msgstr "Sil"
+
+#. TRANSLATORS: "Partition" is the header of the column of partition names.
+#: src/partitionpage.cpp
+msgid "Partition"
+msgstr "Bölüm"
+
+#: src/partitionpage.cpp
+#, python-brace-format
+msgid "Nothing changes on {disk} until you install."
+msgstr "Siz kurulumu başlatana kadar {disk} üzerinde hiçbir değişiklik yapılmaz."
+
+#: src/partitionpage.cpp
+#, python-brace-format
+msgid "The partitions cannot be read: {error}"
+msgstr "Bölümler okunamıyor: {error}"
+
+#: src/partitionpage.cpp
+msgid "Create a new partition table?"
+msgstr "Yeni bir bölümleme tablosu oluşturulsun mu?"
+
+#: src/partitionpage.cpp
+#, python-brace-format
+msgid "Every partition on {disk} will be deleted when Cutefish is installed."
+msgstr "Cutefish kurulduğunda {disk} üzerindeki tüm bölümler silinecektir."
+
+#: src/partitionpage.cpp
+msgid "Add Partition"
+msgstr "Bölüm Ekle"
+
+#: src/partitionpage.cpp
+msgid "New Partition"
+msgstr "Yeni Bölüm"
+
+#: data/cutefish-installer.desktop
+msgid "Install Cutefish on this computer"
+msgstr "Cutefish'i bu bilgisayara kurun"
+
+#: data/cutefish-installer.desktop
+msgid "Installer;Install;Setup;Disk;"
+msgstr "Kurulum;Kur;Yükleyici;Disk;"
